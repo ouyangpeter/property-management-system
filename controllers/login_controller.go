@@ -39,7 +39,7 @@ func (this *LoginController) Post() {
     var loginInfo LoginInfo
 
     err := json.Unmarshal(this.Ctx.Input.RequestBody, &loginInfo)
-    beego.Info(string(this.Ctx.Input.RequestBody))
+    //beego.Info(string(this.Ctx.Input.RequestBody))
     if err != nil {
         // handler error 400
         res := responses.NewInvalidParameterResponse()

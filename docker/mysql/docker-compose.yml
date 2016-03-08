@@ -1,0 +1,9 @@
+mysql4property:
+    image: mysql:5.6
+    #image: mysql_utf8:v1.0
+    environment:
+     - MYSQL_ROOT_PASSWORD=sdf723usdf7weri
+    ports:
+     - "3706:3306"
+    volumes:
+     - /Users/sep/opt/var/property-management-system/mysql:/var/lib/mysql
