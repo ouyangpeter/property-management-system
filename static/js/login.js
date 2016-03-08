@@ -23,13 +23,29 @@ app.controller('loginFormController', function ($scope, $http) {
         });
     };
     $scope.isLoginFailed = function () {
-        if ($scope.loginFailed && $scope.preUser.userName == $scope.user.userName
-            && $scope.preUser.password == $scope.user.password) {
+        if ($scope.loginFailed) {
             return true;
         } else {
             return false;
         }
 
-    }
+    };
+
+    $scope.getUserNameExCSS = function () {
+        if ($scope.user.userName.$dirty && $scope.user.userName.$invalid || $scope.isLoginFailed()) {
+            return "has-error";
+        } else {
+            return "";
+        }
+
+    };
+    $scope.getPasswordExCSS = function () {
+        if ($scope.user.password.$dirty && $scope.user.password.$invalid || $scope.isLoginFailed()) {
+            return "has-error";
+        } else {
+            return "";
+        }
+    };
+
 
 });
