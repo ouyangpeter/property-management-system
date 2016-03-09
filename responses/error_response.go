@@ -1,19 +1,18 @@
 package responses
 
 import (
-    "github.com/astaxie/beego/context"
     "encoding/json"
+    "github.com/astaxie/beego/context"
 )
 
 type ErrorBaseResponse struct {
     BaseResponse
-    Status  int `json:"Status"`
+    Status  int    `json:"Status"`
     Message string `json:"Message"`
 }
 
 func (response *ErrorBaseResponse) Handler(output *context.BeegoOutput) {
     s, _ := json.Marshal(response)
-
 
     output.ContentType("json")
     output.SetStatus(response.Status)
@@ -21,7 +20,7 @@ func (response *ErrorBaseResponse) Handler(output *context.BeegoOutput) {
 }
 
 func NewErrorBaseResponse(status int, message string) *ErrorBaseResponse {
-    errResponse := &ErrorBaseResponse{BaseResponse:*NewBaseResponse(), Status:status, Message:message}
+    errResponse := &ErrorBaseResponse{BaseResponse: *NewBaseResponse(), Status: status, Message: message}
     return errResponse
 }
 
@@ -33,6 +32,6 @@ func NewForbiddenResponse() *ErrorBaseResponse {
     return NewErrorBaseResponse(403, "Forbidden")
 }
 
-func NewUnauthorizedResponse() *ErrorBaseResponse{
+func NewUnauthorizedResponse() *ErrorBaseResponse {
     return NewErrorBaseResponse(401, "Unauthorized")
 }

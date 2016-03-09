@@ -15,12 +15,12 @@
             <form novalidate ng-controller="loginFormController">
                 <div class="form-group //getUserNameExCSS()//">
                     <label class="control-label" for="userName">用户名</label>
-                    <input type="text" class="form-control" id="userName" placeholder="用户名" ng-model="user.userName">
+                    <input type="text" class="form-control" id="userName" placeholder="用户名" ng-model="user.identifier">
                 </div>
 
                 <div class="form-group //getPasswordExCSS()//">
                     <label class="control-label" for="password">密码</label>
-                    <input type="password" class="form-control" id="password" placeholder="密码" ng-model="user.password">
+                    <input type="password" class="form-control" id="password" placeholder="密码" ng-model="user.credential">
                 </div>
                 <code ng-show="isLoginFailed()">登录失败, 请检查账号或密码</code>
                 <button class="btn btn-default form-control" ng-click="login()" style="margin-top: 10px;">登录</button>

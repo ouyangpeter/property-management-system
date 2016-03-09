@@ -10,11 +10,13 @@ app.config(function ($interpolateProvider) {
 });
 
 app.controller('loginFormController', function ($scope, $http) {
-    $scope.user = {'userName': '', 'password': ''};
+    $scope.user = {identifier: '', credential: '', identityType: "username"};
     $scope.loginFailed = false;
     $scope.login = function () {
         $scope.loginUser = angular.copy($scope.user);
-        $scope.loginUser.password = faultylabs.MD5($scope.loginUser.password).toUpperCase()
+        if ($scope.loginUser.identityType == "username"){
+            $scope.loginUser.credential= faultylabs.MD5("#86" + $scope.loginUser.credential+ "#86").toUpperCase()
+        }
         $http.post("/login", $scope.loginUser).success(function () {
             window.location.href = "/";
         }).error(function () {
@@ -32,7 +34,7 @@ app.controller('loginFormController', function ($scope, $http) {
     };
 
     $scope.getUserNameExCSS = function () {
-        if ($scope.user.userName.$dirty && $scope.user.userName.$invalid || $scope.isLoginFailed()) {
+        if ($scope.user.identifier.$dirty && $scope.user.identifier.$invalid || $scope.isLoginFailed()) {
             return "has-error";
         } else {
             return "";
@@ -40,7 +42,7 @@ app.controller('loginFormController', function ($scope, $http) {
 
     };
     $scope.getPasswordExCSS = function () {
-        if ($scope.user.password.$dirty && $scope.user.password.$invalid || $scope.isLoginFailed()) {
+        if ($scope.user.credential.$dirty && $scope.user.credential.$invalid || $scope.isLoginFailed()) {
             return "has-error";
         } else {
             return "";
