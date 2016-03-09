@@ -1,9 +1,12 @@
 package controllers
 
 import (
-    "github.com/astaxie/beego"
     "encoding/json"
+    "github.com/astaxie/beego"
     "property-management-system/responses"
+    "github.com/astaxie/beego/orm"
+    "property-management-system/models"
+    "strings"
 )
 
 type LoginController struct {
@@ -11,26 +14,40 @@ type LoginController struct {
 }
 
 func (this *LoginController) Get() {
-    userName := this.GetSession("UserName")
-    if userName == nil {
+    userId := this.GetSession("UserId")
+    if userId == nil {
         this.TplName = "login.html"
-    }else {
+    } else {
         this.Redirect("/", 302)
     }
 }
 
 type LoginInfo struct {
-    UserName    string `json:"UserName"`
-    EncPassword string `json:"Password"`
+    Identifier   string `json:"Identifier"`
+    Credential   string `json:"Credential"`
+    IdentityType string `json:"IdentityType"`
 }
 
-func check(loginInfo *LoginInfo) bool {
-    //TODO: check in database
+func (this *LoginInfo)check() (bool, uint64) {
+    o := orm.NewOrm()
+    userAuth := &models.UserAuths{IdentityType:this.IdentityType, Identifier:this.Identifier}
+    err := o.Read(userAuth, "identity_type", "identifier")
+    if err != nil {
+        return false, 0
+    }
+    if strings.ToUpper(userAuth.Credential) == strings.ToUpper(this.Credential) {
+        user := &models.User{UserId:userAuth.UserId}
+        err := o.Read(user)
+        if err != nil {
+            return false, 0
+        }
 
-    if loginInfo.UserName == "admin" {
-        return true
+        if user.IsEnabled {
+            return true, userAuth.UserId
+        }
+        return false, 0
     }else {
-        return false
+        return false, 0
     }
 
 }
@@ -39,7 +56,7 @@ func (this *LoginController) Post() {
     var loginInfo LoginInfo
 
     err := json.Unmarshal(this.Ctx.Input.RequestBody, &loginInfo)
-    beego.Info(string(this.Ctx.Input.RequestBody))
+    //beego.Info(string(this.Ctx.Input.RequestBody))
     if err != nil {
         // handler error 400
         res := responses.NewInvalidParameterResponse()
@@ -47,12 +64,12 @@ func (this *LoginController) Post() {
         res.Handler(this.Ctx.Output)
         return
     }
-    if check(&loginInfo) {
-        this.SetSession("UserName", loginInfo.UserName)
+    if ok, uid := loginInfo.check(); ok {
+        this.SetSession("UserId", uid)
         this.Data["json"] = responses.NewBaseResponse()
         this.ServeJSON()
 
-    }else {
+    } else {
         // handler error 401
         res := responses.NewUnauthorizedResponse()
         res.Handler(this.Ctx.Output)
