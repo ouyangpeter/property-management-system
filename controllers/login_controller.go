@@ -30,7 +30,7 @@ type LoginInfo struct {
 
 func (this *LoginInfo)check() (bool, uint64) {
     o := orm.NewOrm()
-    userAuth := &models.UserAuths{IdentityType:this.IdentityType, Identifier:this.Identifier}
+    userAuth := &models.UserAuth{IdentityType:this.IdentityType, Identifier:this.Identifier}
     err := o.Read(userAuth, "identity_type", "identifier")
     if err != nil {
         return false, 0

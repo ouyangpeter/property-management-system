@@ -7,7 +7,7 @@ import (
 
 func init() {
     orm.RegisterModel(new(User))
-    orm.RegisterModel(new(UserAuths))
+    orm.RegisterModel(new(UserAuth))
 }
 
 type User struct {
@@ -18,10 +18,18 @@ type User struct {
     IsEnabled bool `orm:"not null; default(true)"`
 }
 
-type UserAuths struct {
+type UserAuth struct {
     Id           uint64 `orm:"auto; pk; not null"`
     UserId       uint64 `orm:"not null"`
-    IdentityType string `orm:"not null; size(30)"`
-    Identifier   string `orm:"not null; size(30)"`
-    Credential   string `orm:"not null; size(30)"`
+    IdentityType string `orm:"not null; size(30)", json:"IdentityType"`
+    Identifier   string `orm:"not null; size(30)", json:"Identifier"`
+    Credential   string `orm:"not null; size(50)", json:"Credential"`
+}
+
+func (this *UserAuth) IsUserPassword() bool {
+    identityType := this.IdentityType
+    if identityType == "username" || identityType == "phone" || identityType == "email" {
+        return true
+    }
+    return false
 }
