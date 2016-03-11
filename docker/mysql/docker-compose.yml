@@ -1,9 +1,12 @@
 mysql4property:
-    image: mysql:5.6
+    image: mysql_my:v1.0
     #image: mysql_utf8:v1.0
+#    image: mysql:5.6
     environment:
      - MYSQL_ROOT_PASSWORD=sdf723usdf7weri
     ports:
      - "3706:3306"
     volumes:
      - /Users/sep/opt/var/property-management-system/mysql:/var/lib/mysql
+#entrypoint:
+#        "touch /var/run/mysqld/mysqld.sock && /entrypoing.sh"

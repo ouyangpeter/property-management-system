@@ -35,3 +35,7 @@ func NewForbiddenResponse() *ErrorBaseResponse {
 func NewUnauthorizedResponse() *ErrorBaseResponse {
     return NewErrorBaseResponse(401, "Unauthorized")
 }
+
+func NewInternalErrorResponse() *ErrorBaseResponse {
+    return NewErrorBaseResponse(500, "InternalError")
+}
