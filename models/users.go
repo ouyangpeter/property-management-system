@@ -33,3 +33,5 @@ func (this *UserAuth) IsUserPassword() bool {
     }
     return false
 }
+
+

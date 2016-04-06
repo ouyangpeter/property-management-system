@@ -7,5 +7,5 @@ type IndexController struct {
 }
 
 func (this *IndexController) Get() {
-    this.Ctx.WriteString("You were Logined!")
+    this.TplName = "index.html"
 }
