@@ -75,3 +75,4 @@ func (this *AuthController) Patch() {
     }
 
 }
+

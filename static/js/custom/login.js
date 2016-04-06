@@ -15,7 +15,7 @@ app.controller('loginFormController', function ($scope, $http) {
     $scope.login = function () {
         $scope.loginUser = angular.copy($scope.user);
         if ($scope.loginUser.identityType == "username"){
-            $scope.loginUser.credential= faultylabs.MD5("#86" + $scope.loginUser.credential+ "#86").toUpperCase()
+            $scope.loginUser.credential= md5("#86" + $scope.loginUser.credential+ "#86").toUpperCase()
         }
         $http.post("/login", $scope.loginUser).success(function () {
             window.location.href = "/";
