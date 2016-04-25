@@ -13,6 +13,13 @@ type AuthController struct {
     beego.Controller
 }
 
+func isUserPassword(identityType string) (bool) {
+    if identityType == "username" || identityType == "phone" || identityType == "email" {
+        return true
+    }
+    return false
+}
+
 func (this *AuthController) Patch() {
     var userAuth models.UserAuth
 
@@ -54,11 +61,11 @@ func (this *AuthController) Patch() {
 
     // IdentityType是username phone email 的都要修改
     beego.Info(userAuth)
-    if userAuth.IsUserPassword() {
-        userAuth.UserId = uid
+    if isUserPassword(userAuth.IdentityType) {
+        userAuth.User.UserId = uid
         o := orm.NewOrm()
 
-        _, err := o.QueryTable("UserAuth").Filter("UserId", userAuth.UserId).Filter("IdentityType__in", "username", "phone", "email").Update(orm.Params{"Credential":userAuth.Credential})
+        _, err := o.QueryTable("UserAuth").Filter("UserId", userAuth.User.UserId).Filter("IdentityType__in", "username", "phone", "email").Update(orm.Params{"Credential":userAuth.Credential})
 
         if err != nil {
             res := responses.NewInternalErrorResponse()

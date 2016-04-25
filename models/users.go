@@ -16,22 +16,15 @@ type User struct {
     Created   time.Time `orm:"auto_now; type(datetime)"`
     Modified  time.Time `orm:"auto_now_add; type(datetime)"`
     IsEnabled bool `orm:"not null; default(true)"`
+    UserAuthes []*UserAuth `orm:"reverse(many)"`
 }
 
 type UserAuth struct {
     Id           uint64 `orm:"auto; pk; not null"`
-    UserId       uint64 `orm:"not null"`
-    IdentityType string `orm:"not null; size(30)", json:"IdentityType"`
-    Identifier   string `orm:"not null; size(30)", json:"Identifier"`
-    Credential   string `orm:"not null; size(50)", json:"Credential"`
+    User         *User `orm:"rel(fk)"`
+    IdentityType string `orm:"not null; size(30)"`
+    Identifier   string `orm:"not null; size(30)"`
+    Credential   string `orm:"not null; size(50)"`
+    Created      time.Time `orm:"auto_now; type(datetime)"`
+    Modified     time.Time `orm:"auto_now_add; type(datetime)"`
 }
-
-func (this *UserAuth) IsUserPassword() bool {
-    identityType := this.IdentityType
-    if identityType == "username" || identityType == "phone" || identityType == "email" {
-        return true
-    }
-    return false
-}
-
-

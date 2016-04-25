@@ -7,6 +7,7 @@ import (
     "github.com/astaxie/beego/orm"
     "property-management-system/models"
     "strings"
+    "property-management-system/dao"
 )
 
 type LoginController struct {
@@ -29,21 +30,15 @@ type LoginInfo struct {
 }
 
 func (this *LoginInfo)check() (bool, uint64) {
-    o := orm.NewOrm()
-    userAuth := &models.UserAuth{IdentityType:this.IdentityType, Identifier:this.Identifier}
-    err := o.Read(userAuth, "identity_type", "identifier")
+    userAuth, err := dao.GUserDao.GetUserAuthByIdentityTypeAndIdentifier(this.IdentityType, this.Identifier)
     if err != nil {
         return false, 0
     }
     if strings.ToUpper(userAuth.Credential) == strings.ToUpper(this.Credential) {
-        user := &models.User{UserId:userAuth.UserId}
-        err := o.Read(user)
-        if err != nil {
-            return false, 0
-        }
+        user := userAuth.User
 
         if user.IsEnabled {
-            return true, userAuth.UserId
+            return true, user.UserId
         }
         return false, 0
     }else {
