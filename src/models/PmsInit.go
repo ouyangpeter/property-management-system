@@ -1,17 +1,17 @@
 package models
 
 import (
-    "github.com/astaxie/beego/orm"
+    "database/sql"
     "fmt"
     "github.com/astaxie/beego"
-    "os"
-    "database/sql"
-    "log"
-    . "property-management-system/src/lib"
-    "mime"
+    "github.com/astaxie/beego/orm"
     _ "github.com/go-sql-driver/mysql"
     _ "github.com/lib/pq"
     _ "github.com/mattn/go-sqlite3"
+    "log"
+    "mime"
+    "os"
+    . "property-management-system/src/lib"
 )
 
 var o orm.Ormer
@@ -144,8 +144,9 @@ func insertUser() {
     u := new(User)
     u.UserName = "admin"
     u.Password = Pwdhash("admin")
-    u.Email = "osgochina@gmail.com"
+    u.Email = "ouyangpeter911@gmail.com"
     u.Remark = "I'm admin"
+    u.Nickname = "欧阳"
     u.Status = 2
     o = orm.NewOrm()
     n, err := o.Insert(u)

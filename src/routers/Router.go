@@ -14,6 +14,10 @@ func init() {
             &pms.MainController{}, "*:Login"),
         beego.NSRouter("/index",
             &pms.MainController{}, "*:Index"),
+        beego.NSRouter("/logout",
+            &pms.MainController{}, "*:Logout"),
+        beego.NSRouter("/changepwd",
+            &pms.MainController{}, "*:Changepwd"),
     )
     beego.AddNamespace(publicNs)
 
