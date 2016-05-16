@@ -9,6 +9,7 @@ import (
 func init() {
     //models.Initialize()
 
+    beego.Router("/", &pms.MainController{}, "*:Index")
     publicNs := beego.NewNamespace("/public",
         beego.NSRouter("/login",
             &pms.MainController{}, "*:Login"),

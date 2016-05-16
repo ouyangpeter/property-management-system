@@ -21,7 +21,7 @@ type User struct {
     LastLoginTime time.Time `orm:"null;type(datetime)" form:"-"`
     Created       time.Time `orm:"type(datetime);auto_now_add"`
     Modified      time.Time `orm:"type(datetime):auto_now;null"`
-    Roles         []*Role   `orm:"rel(m2m)"`
+    Roles[]*Role   `orm:"rel(m2m)"`
 }
 
 func init() {

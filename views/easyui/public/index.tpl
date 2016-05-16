@@ -1,232 +1,345 @@
 {{template "../public/header.tpl"}}
 <script type="text/javascript">
-var URL="/public"
-    $( function() {
-        //生成树
-        $("#tree").tree({
-            url:URL+'/index',
-            onClick:function(node){
-                if(node.attributes.url == ""){
-                    $(this).tree("toggle",node.target);
-                    return false;
-                }
-                var href = node.attributes.url;
-                var tabs = $("#tabs");
-                if(href){
-                    var content = '<iframe scrolling="auto" frameborder="0"  src="'+href+'" style="width:100%;height:100%;"></iframe>';
-                }else{
-                    var content = '未实现';
-                }
-                //已经存在tabs则选中它
-                if(tabs.tabs('exists',node.text)){
-                    //选中
-                    tabs.tabs('select',node.text);
-                    //refreshTab(node.text);
-                }else{
-                    //添加
-                    tabs.tabs('add',{
-                        title:node.text,
-                        content:content,
-                        closable:true,
-                        cache:false,
-                        fit:'true'
-                    });
-                }
-            }
-        });
-        $("#tabs").tabs({
-            width: $("#tabs").parent().width(),
-            height: "auto",
-            fit:true,
-            border:false,
-            onContextMenu : function(e, title) {
-                e.preventDefault();
-                $("#mm").menu('show', {
-                    left : e.pageX,
-                    top : e.pageY
-                }).data('tabTitle', title);
-            }
-        });
-        $('#mm').menu({
-            onClick : function(item) {
-                var curTabTitle = $(this).data('tabTitle');
-                var type = $(item.target).attr('type');
+    var URL = "/public"
 
-                if (type === 'refresh') {
-                    refreshTab(curTabTitle);
-                    return;
-                }
-
-                if (type === 'close') {
-                    var t = $("#tabs").tabs('getTab', curTabTitle);
-                    if (t.panel('options').closable) {
-                        $("#tabs").tabs('close', curTabTitle);
-                    }
-                    return;
-                }
-
-                var allTabs = $("#tabs").tabs('tabs');
-                var closeTabsTitle = [];
-
-                $.each(allTabs, function() {
-                    var opt = $(this).panel('options');
-                    if (opt.closable && opt.title != curTabTitle && type === 'closeOther') {
-                        closeTabsTitle.push(opt.title);
-                    } else if (opt.closable && type === 'closeAll') {
-                        closeTabsTitle.push(opt.title);
-                    }
-                });
-                for ( var i = 0; i < closeTabsTitle.length; i++) {
-                    $("#tabs").tabs('close', closeTabsTitle[i]);
-                }
-            }
-        });
-        //修改配色方案
-        $("#changetheme").change(function(){
-            var theme = $(this).val();
-            $.cookie("theme",theme); //新建cookie
-            location.reload();
-        });
-        //设置已选theme的值
-//        var themed = $.cookie('theme');
-//        if(themed){
-//            $("#changetheme").val(themed);
-//        }
-    });
-    function refreshTab(title) {
-        var tab = $("#tabs").tabs("getTab", title);
-        $("#tabs").tabs("update", {tab: tab, options: tab.panel("options")});
-    }
-    function undo(){
-        $('#tree').tree('expandAll');
-    }
-    function redo(){
-        $('#tree').tree('collapseAll');
-    }
-    function modifypassword(){
+    function modifypassword() {
         $("#dialog").dialog({
-            modal:true,
-            title:"修改密码",
-            width:400,
-            height:250,
-            buttons:[{
-                text:'保存',
-                iconCls:'icon-save',
-                handler:function(){
-                    $("#form1").form('submit',{
-                        url:URL+'/changepwd',
-                        onSubmit:function(){
+            modal: true,
+            title: "修改密码",
+            width: 300,
+            height: 200,
+            buttons: [{
+                text: '保存',
+                iconCls: 'icon-save',
+                handler: function () {
+                    $("#form1").form('submit', {
+                        url: URL + '/changepwd',
+                        onSubmit: function () {
                             return $("#form1").form('validate');
                         },
-                        success:function(r){
-                            var r = $.parseJSON( r );
-                            if(r.status){
-                                $.messager.alert("提示", r.info,'info',function(){
-                                    location.href = URL+"/logout";
+                        success: function (r) {
+                            var r = $.parseJSON(r);
+                            if (r.status) {
+                                $.messager.alert("提示", r.info, 'info', function () {
+                                    location.href = URL + "/logout";
                                 });
-                            }else{
+                            } else {
                                 vac.alert(r.info);
                             }
                         }
                     });
                 }
-            },{
-                text:'取消',
-                iconCls:'icon-cancel',
-                handler:function(){
+            }, {
+                text: '取消',
+                iconCls: 'icon-cancel',
+                handler: function () {
                     $("#dialog").dialog("close");
                 }
             }]
         });
+        $("#oldPassword").focus();
     }
-    //选择分组
-    function selectgroup(group_id){
-        $(this).addClass("current");
-        vac.ajax(URL+'/index', {group_id:group_id}, 'GET', function(data){
-            $("#tree").tree("loadData",data)
+
+    $(document).ready(function () {
+        addTabIcon("首页", "home.aspx", "icon-home");
+    });
+
+
+    $(function () {
+        closeTab();
+        closePwd();
+    })
+
+    $(function () {
+        $('#loginOut').click(function () {
+            $.messager.confirm('系统提示', '您确定要退出本次登录吗?', function (r) {
+
+                if (r) {
+                    location.href = '/public/logout';
+                }
+            });
         })
 
+
+    });
+
+    function addTab(subtitle, url) {
+        if (!$('#tabs').tabs('exists', subtitle)) {
+            $('#tabs').tabs('add', {
+                title: subtitle,
+                content: createFrame(url),
+                closable: true
+            });
+        } else {
+            $('#tabs').tabs('select', subtitle);
+
+            var currTab = $('#tabs').tabs('getSelected');
+            var url = $(currTab.panel('options').content).attr('src');
+            $('#tabs').tabs('update', {
+                tab: currTab,
+                options: {
+                    content: createFrame(url)
+                }
+            })
+        }
+        closeTab();
+    }
+
+
+    function addTabIcon(subtitle, url, icon) {
+
+        if (!$('#tabs').tabs('exists', subtitle)) {
+            $('#tabs').tabs('add', {
+                title: subtitle,
+                content: createFrame(url),
+                closable: false,
+                icon: icon
+            });
+        } else {
+            $('#tabs').tabs('select', subtitle);
+
+            var currTab = $('#tabs').tabs('getSelected');
+            var url = $(currTab.panel('options').content).attr('src');
+            $('#tabs').tabs('update', {
+                tab: currTab,
+                options: {
+                    content: createFrame(url)
+                }
+            })
+        }
+        closeTab();
+
+    }
+
+    function createFrame(url) {
+        var s = '<iframe scrolling="auto" frameborder="0"  src="' + url + '" style="width:100%;height:100%;"></iframe>';
+        return s;
+    }
+
+    function closeTab() {
+        $(".tabs-inner").dblclick(function () {
+            var subtitle = $(this).children(".tabs-closable").text();
+            $('#tabs').tabs('close', subtitle);
+        })
+    }
+
+
+    //关闭登录窗口
+    function closePwd() {
+        $('#dialog').window('close');
+    }
+
+    //修改密码
+    function serverLogin() {
+
+        var $oldpass = $('#txtOldPass');
+
+        var $newpass = $('#txtNewPass');
+        var $rePass = $('#txtRePass');
+
+        if ($oldpass.val() == '') {
+            $.messager.alert('系统提示', '请输入原密码！', 'warning');
+            return false;
+        }
+
+        if ($newpass.val() == '') {
+            $.messager.alert('系统提示', '请输入密码！', 'warning');
+            return false;
+        }
+        if ($rePass.val() == '') {
+            $.messager.alert('系统提示', '请在一次输入密码！', 'warning');
+            return false;
+        }
+
+        if ($newpass.val() != $rePass.val()) {
+            $.messager.alert('系统提示', '两次密码不一至！请重新输入', 'warning');
+            return false;
+        }
+
+        $('#w').window('close');
+
+
+        var sPost = "";
+
+        sPost += "&oldpass=" + $("#txtOldPass").val();
+
+        sPost += "&password=" + $("#txtNewPass").val();
+
+        var RandTime = new Date();
+
+        $.ajax({
+
+            type: "post",
+
+            async: false,
+
+            cache: false,
+
+            url: "system/ajax_pages/ajax_public.aspx?Action=4&RandTime=" + RandTime.toString() + sPost,
+
+            error: function () {
+
+                $("#txtOldPass").val("");
+
+                $("#txtNewPass").val("");
+
+                $("#txtRePass").val("");
+
+                $.messager.alert('错误', '获取账号信息失败...请联系管理员!', 'error');
+            },
+
+            success: function (xml) {
+                $(xml).find("item").each(function () {
+                    $("#txtOldPass").val("");
+
+                    $("#txtNewPass").val("");
+
+                    $("#txtRePass").val("");
+
+
+                    var respcode = "";
+
+                    respcode = $(this).find("respcode").text();
+
+                    if (respcode == "1") {
+                        $.messager.alert('提示', "密码修改成功,请牢记!", 'info');
+                    }
+                    else {
+                        var respmsg = $(this).find("respmsg").text();
+
+                        $.messager.alert('错误', respmsg, 'error');
+                    }
+                });
+            }
+
+        });
     }
 </script>
+<body class="easyui-layout" style="overflow-y: hidden;" scroll="no">
 
-<style>
-.ht_nav {
-    float: left;
-    overflow: hidden;
-    padding: 0 0 0 10px;
-    margin: 0;
-}
-.ht_nav li{
-    font:700 16px/2.5 'microsoft yahei';
-    float: left;
-    list-style-type: none;
-    margin-right: 10px;
+<div region="north" border="false" style="overflow: hidden; height: 40px;">
 
-}
-.ht_nav li a{
-    text-decoration: none;
-    color:#333;
-}
-.ht_nav li a.current, .ht_nav li a:hover{
-    color:#F20;
+    <div class="heder">
 
-}
-</style>
-<body class="easyui-layout" style="text-align:left">
-<div region="north" border="false" style="overflow: hidden; width: 100%; height:82px; background:#D9E5FD;">
-    <div style="overflow: hidden; width:200px; padding:2px 0 0 12px;">
-        <h2>物业管理系统</h2>
-    </div>
-    <!--<ul class="ht_nav">-->
-        <!--{{range .groups}}-->
-            <!--<li><span><a class="current"  href="#" onClick="selectgroup({{.Id}});$('.ht_nav li a').removeClass('current');$(this).addClass('current')">{{.Title}}</a></span></li>-->
-        <!--{{end}}-->
-    <!--</ul>-->
-    <div id="header-inner" style="float:right; overflow:hidden; height:80px; width:300px; line-height:25px; text-align:right; padding-right:20px;margin-top:-50px; ">
-        欢迎你！ {{.userinfo.Nickname}} <a href="javascript:void(0);" onclick="modifypassword()"> 修改密码</a>
-        <a href="/public/logout" target="_parent"> 退 出</a>
-    </div>
-</div>
-<div id="dialog" >
-    <div style="padding:20px 20px 40px 80px;" >
-        <form id="form1" method="post">
-            <table>
+        <div class="top_logo">
+
+            <table cellpadding="0" cellspacing="0" border="0">
                 <tr>
-                    <td>旧密码</td>
-                    <td><input type="password"  name="oldPassword" class="easyui-validatebox"  required="true" validType="password[5,20]" missingMessage="请填写当前使用的密码"/></td>
-                </tr>
-                <tr>
-                    <td>新密码：</td>
-                    <td><input type="password"  name="newPassword" class="easyui-validatebox" required="true" validType="password[5,20]" missingMessage="请填写需要修改的密码"  /></td>
-                </tr>
-                <tr>
-                    <td>重复密码：</td>
-                    <td><input type="password"  name="repeatPassword"  class="easyui-validatebox" required="true" validType="password[5,20]" missingMessage="请重复填写需要修改的密码" /></td>
+                    <td></td>
+                    <td valign="top">
+                        <div style="padding-top:10px; padding-left:20px;"><span id="Lab_sysname"
+                                                                                style="font-size:14px; font-weight:bold; color:White; font-family:宋体; ">物业管理系统</span>
+                        </div>
+                    </td>
                 </tr>
             </table>
-        </form>
+
+        </div>
+
+        <div style="float:right; padding-right:20px; margin-top:10px;" class="head">欢迎 <span id="Lab_user"><font
+                color='#ff9933'><strong>{{.userinfo.Nickname}}</strong></font></span>&nbsp;&nbsp;|&nbsp;&nbsp;<a
+                href="/public/index">返回首页</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="#" id="editpass"
+                                                                         onclick="modifypassword()">修改密码</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a
+                href="#" id="loginOut">安全退出</a>
+        </div>
+
+        <div class="clear"></div>
+    </div>
+
+</div>
+
+<div region="west" split="true" iconCls="icon-news" title="主菜单" style="width:150px;padding:0px;">
+    <div id="d_accordionmenu" class="easyui-accordion" fit="true">
+        <div title='业主管理'>
+            <ul>
+                <li><a href="#" onclick="addTab('业主管理', '');">业主管理</a></li>
+            </ul>
+        </div>
+
+        <div title='楼盘管理'>
+            <ul>
+                <li><a href="#" onclick="addTab('楼宇管理', '')">楼宇管理</a></li>
+            </ul>
+            <ul>
+                <li><a href="#" onclick="addTab('房产管理', '')">房产管理</a></li>
+            </ul>
+        </div>
+        <div title='车位管理'>
+            <ul>
+                <li><a href="#" onclick="addTab('车位区域管理', '')">车位区域管理</a></li>
+            </ul>
+            <ul>
+                <li><a href="#" onclick="addTab('车位管理', '')">车位管理</a></li>
+            </ul>
+        </div>
+        <div title='缴费管理'>
+            <ul>
+                <li><a href="#" onclick="addTab('缴费项目设置', '')">缴费项目设置</a></li>
+            </ul>
+            <ul>
+                <li><a href="#" onclick="addTab('业主缴费', '')">业主缴费</a></li>
+            </ul>
+        </div>
     </div>
 </div>
-</div>
-<div region="west" border="false" split="true" title="菜单"  tools="#toolbar" style="width:143px;padding:5px;">
-    <ul id="tree">
-    </ul>
-</div>
-<div region="center" border="false" >
-    <div id="tabs" >
+<div region="center" iconCls="icon-index">
+    <div class="easyui-tabs" fit="true" border="false" id="tabs">
+
     </div>
 </div>
-<div id="toolbar">
-    <a href="#" class="icon-undo" title="全部展开"  onclick="undo()"></a>
-    <a href="#" class="icon-redo" title="全部关闭"  onclick="redo()"></a>
+<div region="south" style="height:40px; background-image: url(/static/easyui/img/footerback.png);">
+    <div id="footer" style="padding:10px 5px 5px 5px; color:White;">
+        <table width="100%" cellpadding="2" cellspacing="2">
+            <tr>
+                <td align="right">
+                    <div id="d_welinfo" class="index_welinfo"><span style='font-family:Arial;'>&copy;</span>&nbsp;2016&nbsp;毕业设计.
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
 </div>
-<!--右键菜单-->
-<div id="mm" style="width: 120px;display:none;">
-    <div iconCls='icon-reload' type="refresh">刷新</div>
+
+
+<!--修改密码窗口-->
+<div id="dialog" class="easyui-window" title="修改密码" collapsible="false" minimizable="false" maximizable="false"
+     icon="icon-save" style="width: 300px; height: 180px; padding: 5px; background: #fafafa;">
+    <div class="easyui-layout" fit="true">
+        <div region="center" border="false" style="padding: 10px; background: #fff; border: 0px solid #ccc;">
+            <form id="form1" method="post">
+                <table width="100%" class="publictable">
+                    <tr>
+                        <td style="width:90px;">原密码：</td>
+                        <td><input id="oldPassword" name="oldPassword" type="Password" class="easyui-validatebox"
+                                   required="true"
+                                   validType="password[5,20]" missingMessage="请填写当前使用的密码"/></td>
+                    </tr>
+
+                    <tr>
+                        <td style="width:90px;">新密码：</td>
+                        <td><input name="newPassword" type="Password" class="easyui-validatebox" required="true"
+                                   validType="password[5,20]" missingMessage="请填写需要修改的密码"/></td>
+                    </tr>
+                    <tr>
+                        <td style="width:90px;">确认新密码：</td>
+                        <td><input name="repeatPassword" type="Password" class="easyui-validatebox" required="true"
+                                   validType="password[5,20]" missingMessage="请重复填写需要修改的密码"/></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="mm" class="easyui-menu" style="width:150px;">
+    <div id="mm-tabupdate">刷新</div>
     <div class="menu-sep"></div>
-    <div  type="close">关闭</div>
-    <div type="closeOther">关闭其他</div>
-    <div type="closeAll">关闭所有</div>
+    <div id="mm-tabclose">关闭</div>
+
+    <div class="menu-sep"></div>
+    <div id="mm-exit">退出</div>
 </div>
+
+
 </body>
 </html>
