@@ -47,7 +47,6 @@ func Syncdb() {
         fmt.Println(err)
     }
     insertUser()
-    insertRole()
     fmt.Println("database init is complete.\nPlease restart the application")
 
 }
@@ -146,6 +145,7 @@ func insertUser() {
     u.Remark = "I'm admin"
     u.Nickname = "欧阳"
     u.Status = 2
+    u.Type = 12
     o = orm.NewOrm()
     n, err := o.Insert(u)
     if err != nil {
@@ -157,18 +157,3 @@ func insertUser() {
 
 }
 
-func insertRole() {
-    fmt.Println("insert role ...")
-    r := new(Role)
-    r.Name = "Admin"
-    r.Remark = "I'm a admin role"
-    r.Status = 2
-    r.Title = "Admin role"
-    n, err := o.Insert(r)
-    if err != nil {
-        fmt.Println(err.Error())
-        os.Exit(-1)
-    } else {
-        fmt.Println("insert", n, "role end")
-    }
-}

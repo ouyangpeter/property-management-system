@@ -38,6 +38,7 @@
             }]
         });
         $("#oldPassword").focus();
+        $("#form1").form('clear');
     }
 
     $(document).ready(function () {
@@ -261,7 +262,7 @@
 
         <div title='楼盘管理'>
             <ul>
-                <li><a href="#" onclick="addTab('楼宇管理', '')">楼宇管理</a></li>
+                <li><a href="#" onclick="addTab('楼宇管理', '/pms/building/index')">楼宇管理</a></li>
             </ul>
             <ul>
                 <li><a href="#" onclick="addTab('房产管理', '')">房产管理</a></li>

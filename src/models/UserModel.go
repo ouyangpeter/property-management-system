@@ -15,13 +15,13 @@ type User struct {
     Password      string    `orm:"size(128)" form:"Password" valid:"Required;MaxSize(70);MinSize(50)"`
     RePassword    string    `orm:"-" form:"Repassword" valid:"Required"`
     Nickname      string    `orm:"size(32)" form:"Nickname" valid:"Required;MaxSize(20);MinSize(2)"`
+    Type          int       `orm:"default(11)" valid:"Required;Range(11,12)"`
     Email         string    `orm:"size(32)" form:"Email" valid:"Email"`
     Remark        string    `orm:"null;size(200)" form:"Remark" valid:"MaxSize(200)"`
     Status        int       `orm:"default(2)" form:"Status" valid:"Range(1,2)"`
     LastLoginTime time.Time `orm:"null;type(datetime)" form:"-"`
-    Created       time.Time `orm:"type(datetime);auto_now_add"`
-    Modified      time.Time `orm:"type(datetime):auto_now;null"`
-    Roles[]*Role   `orm:"rel(m2m)"`
+    Created       time.Time `orm:"type(datetime);auto_now_add" form:"-"`
+    Modified      time.Time `orm:"type(datetime);auto_now;null" form:"-"`
 }
 
 func init() {
@@ -36,7 +36,7 @@ func GetUserByUsername(userName string) (user User) {
 }
 
 func UpdateUser(u *User) (int64, error) {
-    log.Println(u)
+    //log.Println(u)
     if err := checkUser(u); err != nil {
         return 0, err
     }
