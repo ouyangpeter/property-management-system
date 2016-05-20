@@ -250,11 +250,14 @@
 
 <div region="west" split="true" iconCls="icon-news" title="主菜单" style="width:150px;padding:0px;">
     <div id="d_accordionmenu" class="easyui-accordion" fit="true">
-        <div title='业主管理'>
+        <div title='小区管理'>
             <ul>
-                <li><a href="#" onclick="addTab('业主管理', '');">业主管理</a></li>
+                <li><a href="#" onclick="addTab('小区信息', '');">小区信息</a></li>
+                <li><a href="#" onclick="addTab('周边设施', '');">周边设施</a></li>
+                <li><a href="#" onclick="addTab('系统公告', '');">系统公告</a></li>
             </ul>
         </div>
+
 
         <div title='楼盘管理'>
             <ul>
@@ -272,12 +275,18 @@
                 <li><a href="#" onclick="addTab('车位管理', '')">车位管理</a></li>
             </ul>
         </div>
-        <div title='缴费管理'>
+        <div title='收费管理'>
             <ul>
-                <li><a href="#" onclick="addTab('缴费项目设置', '')">缴费项目设置</a></li>
+                <li><a href="#" onclick="addTab('收费项目', '')">收费项目</a></li>
             </ul>
             <ul>
-                <li><a href="#" onclick="addTab('业主缴费', '')">业主缴费</a></li>
+                <li><a href="#" onclick="addTab('收费信息', '')">收费信息</a></li>
+            </ul>
+        </div>
+        <div title='用户管理'>
+            <ul>
+                <li><a href="#" onclick="addTab('业主管理', '');">业主管理</a></li>
+                <li><a href="#" onclick="addTab('员工管理', '');">员工管理</a></li>
             </ul>
         </div>
     </div>
