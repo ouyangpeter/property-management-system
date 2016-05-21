@@ -18,6 +18,7 @@
             singleSelect: true,
             idField: 'Id',
             pagination: true,
+            fit:true,
             pageSize: 20,
             pageList: [10, 20, 30, 50, 100],
             columns: [[
@@ -221,9 +222,9 @@
         $('#datagrid').datagrid('load', postData);
     }
 </script>
-<body style="padding:2px; margin:0px;" class="panel-noscroll easyui-layout">
-<div>
-    <div data-options="region:'north'" style="margin: 2px; height: 58px;">
+<body style="padding:2px; margin:0px;" class="panel-noscroll">
+<div class="easyui-layout layout" fit="true">
+    <div data-options="region:'north'" style="margin: 2px; height: 60px;">
         <div class="panel-header">
             <div class="panel-title">查询条件</div>
             <div class="panel-tool"><a href="javascript:void(0)" class="layout-button-up"></a></div>

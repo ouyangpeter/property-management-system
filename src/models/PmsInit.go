@@ -10,6 +10,8 @@ import (
     "mime"
     "os"
     . "property-management-system/src/lib"
+    "time"
+    "strconv"
 )
 
 var o orm.Ormer
@@ -47,6 +49,9 @@ func Syncdb() {
         fmt.Println(err)
     }
     insertUser()
+    for i := 0; i < 100; i++ {
+        insertBuilding("test" + strconv.Itoa(i))
+    }
     fmt.Println("database init is complete.\nPlease restart the application")
 
 }
@@ -154,6 +159,23 @@ func insertUser() {
     } else {
         fmt.Println("insert", n, "user end")
     }
+}
 
+func insertBuilding(name string) {
+    fmt.Println("insert building:", name)
+    b := new(StoriedBuilding)
+    b.Name = name
+    b.Height = 50
+    b.Floors = 11
+    b.Area = 800
+    b.BuildDate = time.Now()
+    o = orm.NewOrm()
+    n, err := o.Insert(b)
+    if err != nil {
+        fmt.Println(err.Error())
+        os.Exit(-1)
+    } else {
+        fmt.Println("insert", n, "building end")
+    }
 }
 
