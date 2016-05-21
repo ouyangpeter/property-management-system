@@ -20,14 +20,34 @@ type StoriedBuilding struct {
     Remark    string        `orm:"null;size(200)" form:"Remark" valid:"MaxSize(200)"`
 }
 
+type BuildingQueryParam struct {
+    Name   string
+    Floors int
+    Height int
+    Area   int
+}
+
 func init() {
     orm.RegisterModel(new(StoriedBuilding))
 }
 
-func GetBuildingList(page int64, page_size int64, sort string) (buildings []orm.Params, count int64) {
+func GetBuildingList(page int64, page_size int64, sort string, queryData BuildingQueryParam) (buildings []orm.Params, count int64) {
     o := orm.NewOrm()
     storiedBuilding := new(StoriedBuilding)
     qs := o.QueryTable(storiedBuilding)
+    //log.Println(queryData)
+    if len(queryData.Name) > 0{
+        qs = qs.Filter("Name__contains", queryData.Name)
+    }
+    if queryData.Area > 0{
+        qs = qs.Filter("Area", queryData.Area)
+    }
+    if queryData.Floors > 0 {
+        qs = qs.Filter("Floors", queryData.Floors)
+    }
+    if queryData.Height > 0 {
+        qs = qs.Filter("Height", queryData.Height)
+    }
     var offset int64
     if page <= 1 {
         offset = 0
@@ -92,14 +112,14 @@ func UpdateBuilding(building *StoriedBuilding) (int64, error) {
         newBuilding["Area"] = building.Area
     }
 
-    if len(building.Name) > 0{
+    if len(building.Name) > 0 {
         newBuilding["Name"] = building.Name
     }
 
-    if len(building.Remark) > 0{
+    if len(building.Remark) > 0 {
         newBuilding["Remark"] = building.Remark
     }
-    if !building.BuildDate.IsZero(){
+    if !building.BuildDate.IsZero() {
         newBuilding["BuildDate"] = building.BuildDate
     }
     var table StoriedBuilding

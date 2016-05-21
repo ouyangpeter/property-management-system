@@ -22,24 +22,26 @@
             pageList: [10, 20, 30, 50, 100],
             columns: [[
                 {field: 'Id', title: 'ID', width: 30, sortable: true},
-                {field: 'Name', title: '楼宇名称', width: 80, sortable: true},
-                {field: 'Floors', title: '层数', width: 50, align: 'right', editor: 'numberbox'},
-                {field: 'Height', title: '高度', width: 50, align: 'right', editor: 'numberbox'},
-                {field: 'Area', title: '面积', width: 50, align: 'right', editor: 'numberbox'},
+                {field: 'Name', title: '楼宇名称', width: 40, sortable: true},
+                {field: 'Floors', title: '层数', width: 30, align: 'right', editor: 'numberbox', sortable: true},
+                {field: 'Height', title: '高度', width: 30, align: 'right', editor: 'numberbox', sortable: true},
+                {field: 'Area', title: '面积', width: 30, align: 'right', editor: 'numberbox', sortable: true},
                 {
-                    field: 'BuildDate', title: '建成日期', width: 80, align: 'center',
+                    field: 'BuildDate', title: '建成日期', width: 60, align: 'center',
                     editor: {type: 'datebox', options: {formatter: myformatter, parser: myparser}},
                     formatter: function (value, row, index) {
                         if (value) return phpjs.date("Y-m-d", phpjs.strtotime(value));
                         return value;
-                    }
+                    },
+                    sortable: true
                 },
                 {
-                    field: 'Created', title: '添加时间', width: 100, align: 'center',
+                    field: 'Created', title: '添加时间', width: 80, align: 'center',
                     formatter: function (value, row, index) {
                         if (value) return phpjs.date("Y-m-d H:i:s", phpjs.strtotime(value));
                         return value;
-                    }
+                    },
+                    sortable: true
                 },
                 {field: 'Remark', title: '备注', width: 50, align: 'center', editor: 'text'},
 
@@ -74,6 +76,12 @@
                     left: e.clientX,
                     top: e.clientY
                 });
+            },
+            onLoadSuccess: function (data) {
+                if (data.rows.length == 0) {
+                    var body = $(this).data().datagrid.dc.body2;
+                    body.find('table tbody').append('<tr><td width="' + body.width() + '" style="height: 25px; text-align: center;" colspan="6">没有数据</td></tr>');
+                }
             }
         });
         //创建添加楼宇窗口
@@ -194,9 +202,58 @@
             }
         });
     }
+
+    function Query() {
+        var postData = new Object();
+        if ($('#query_name').val() != '') {
+            postData.name = $('#query_name').val();
+        }
+
+        if ($('#query_floors').val() != '') {
+            postData.floors = $('#query_floors').val();
+        }
+        if ($('#query_area').val() != '') {
+            postData.area = $('#query_area').val();
+        }
+        if ($('#query_height').val() != '') {
+            postData.area = $('#query_height').val();
+        }
+        $('#datagrid').datagrid('load', postData);
+    }
 </script>
-<body>
-<table id="datagrid" toolbar="#tb"></table>
+<body style="padding:2px; margin:0px;" class="panel-noscroll easyui-layout">
+<div>
+    <div data-options="region:'north'" style="margin: 2px; height: 58px;">
+        <div class="panel-header">
+            <div class="panel-title">查询条件</div>
+            <div class="panel-tool"><a href="javascript:void(0)" class="layout-button-up"></a></div>
+        </div>
+        <div data-options="region:'north',split:true,title:'查询条件'" style="padding: 2px;"
+             title="" class="panel-body layout-body">
+            <table cellpadding="3" cellspacing="3">
+                <tbody>
+                <tr>
+                    <td>名称:</td>
+                    <td><input type="text" id="query_name" value="" size="20"></td>
+                    <td>层数:</td>
+                    <td><input type="text" id="query_floors" value="" size="10"></td>
+                    <td>高度:</td>
+                    <td><input type="text" id="query_height" value="" size="10"></td>
+                    <td>面积:</td>
+                    <td><input type="text" id="query_area" value="" size="10"
+                               onkeydown="if(event.keyCode == 13) {Query();}"></td>
+                    <td><input value="查询" type="button" id="BN_Find" style="width:80px; height:30px;" class="button"
+                               onclick="Query();"></td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+    <div data-options="region:'center'" style="margin: 2px;">
+        <table id="datagrid" toolbar="#tb"></table>
+    </div>
+</div>
 <div id="tb" style="padding:5px;height:auto">
     <a href="#" icon='icon-add' plain="true" onclick="addrow()" class="easyui-linkbutton">新增</a>
     <a href="#" icon='icon-edit' plain="true" onclick="editrow()" class="easyui-linkbutton">编辑</a>

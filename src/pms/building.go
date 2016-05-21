@@ -13,6 +13,16 @@ func (this *BuildingController)Index() {
     page_size, _ := this.GetInt64("rows")
     sort := this.GetString("sort")
     order := this.GetString("order")
+    name := this.GetString("name")
+    floors, _ := this.GetInt("floors")
+    height, _ := this.GetInt("height")
+    area, _ := this.GetInt("area")
+    queryData := m.BuildingQueryParam{
+        Name:name,
+        Floors:floors,
+        Area: area,
+        Height:height,
+    }
 
     if len(order) > 0 {
         if order == "desc" {
@@ -21,7 +31,7 @@ func (this *BuildingController)Index() {
     } else {
         sort = "Id"
     }
-    buildings, count := m.GetBuildingList(page, page_size, sort)
+    buildings, count := m.GetBuildingList(page, page_size, sort, queryData)
 
     if this.IsAjax() {
         this.Data["json"] = &map[string]interface{}{"total":count, "rows":buildings}
