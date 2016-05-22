@@ -49,10 +49,44 @@ func Syncdb() {
         fmt.Println(err)
     }
     insertUser()
+    insertTestData()
+
+    fmt.Println("database init is complete.\nPlease restart the application")
+
+}
+
+func insertTestData() {
     for i := 0; i < 100; i++ {
         insertBuilding("test" + strconv.Itoa(i))
     }
-    fmt.Println("database init is complete.\nPlease restart the application")
+
+    b := new(StoriedBuilding)
+    b.Name = "龙翔苑"
+    b.Height = 50
+    b.Floors = 11
+    b.Area = 800
+    b.BuildDate = time.Now()
+    o := orm.NewOrm()
+    _, err := o.Insert(b)
+    if err != nil {
+        fmt.Println(err.Error())
+        os.Exit(-1)
+    } else {
+        fmt.Println("insert test building end")
+    }
+    fmt.Println(b)
+    house := new(House)
+    house.Area = 100
+    house.Building = b
+    house.HouseNo = "301"
+    house.UnitName = "2"
+    _, err = o.Insert(house)
+    if err != nil {
+        fmt.Println(err.Error())
+        os.Exit(-1)
+    } else {
+        fmt.Println("inset test house end")
+    }
 
 }
 

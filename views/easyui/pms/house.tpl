@@ -1,10 +1,10 @@
 {{template "../public/header.tpl"}}
 <script type="text/javascript">
-    var URL = "/pms/building";
+    var URL = "/pms/house";
     $(function () {
-        //楼宇列表
+        //房屋列表
         $("#datagrid").datagrid({
-            title: '楼宇列表',
+            title: '房屋列表',
             url: URL + '/index',
             method: 'POST',
             pagination: true,
@@ -19,18 +19,24 @@
             pageList: [10, 20, 30, 50, 100],
             columns: [[
                 {field: 'Id', title: 'ID', width: 30, sortable: true},
-                {field: 'Name', title: '楼宇名称', width: 40, sortable: true},
-                {field: 'Floors', title: '层数', width: 30, align: 'right', editor: 'numberbox', sortable: true},
-                {field: 'Height', title: '高度', width: 30, align: 'right', editor: 'numberbox', sortable: true},
+                {
+                    field: 'BuildingName', title: '楼宇名称', width: 40,
+                    formatter: function (value, rec) {
+                        return rec.Building.Name;
+                    }
+                },
+                {field: 'UnitName', title: '单元名称', width: 30, align: 'center', editor: 'text', sortable: true},
+                {field: 'HouseNo', title: '房号', width: 30, align: 'center', editor: 'text', sortable: true},
                 {field: 'Area', title: '面积', width: 30, align: 'right', editor: 'numberbox', sortable: true},
                 {
-                    field: 'BuildDate', title: '建成日期', width: 60, align: 'center',
-                    editor: {type: 'datebox', options: {formatter: myformatter, parser: myparser}},
-                    formatter: function (value, row, index) {
-                        if (value) return phpjs.date("Y-m-d", phpjs.strtotime(value));
-                        return value;
-                    },
-                    sortable: true
+                    field: 'OnwerName', title: '户主', width: 30, align: 'center',
+                    formatter: function (value, rec) {
+                        if (rec.Owner != null) {
+                            return rec.Owner.Name;
+                        } else {
+                            return "";
+                        }
+                    }
                 },
                 {
                     field: 'Created', title: '添加时间', width: 80, align: 'center',
@@ -48,7 +54,7 @@
                     return;
                 }
                 changes.Id = data.Id;
-                vac.ajax(URL + '/updateBuilding', changes, 'POST', function (r) {
+                vac.ajax(URL + '/updateHouse', changes, 'POST', function (r) {
                     if (!r.status) {
                         vac.alert(r.info);
                     } else {
@@ -89,7 +95,7 @@
                 else $(this).closest('div.datagrid-wrap').find('div.datagrid-pager').show();
             }
         });
-        //创建添加楼宇窗口
+        //创建添加房屋窗口
         $("#dialog").dialog({
             modal: true,
             resizable: true,
@@ -100,7 +106,7 @@
                 iconCls: 'icon-save',
                 handler: function () {
                     $("#form1").form('submit', {
-                        url: URL + '/addBuilding',
+                        url: URL + '/addHouse',
                         onSubmit: function () {
                             return $("#form1").form('validate');
                         },
@@ -168,7 +174,7 @@
                     vac.alert("请选择要删除的行");
                     return;
                 }
-                vac.ajax(URL + '/deleteBuilding', {Id: row.Id}, 'POST', function (r) {
+                vac.ajax(URL + '/deleteHouse', {Id: row.Id}, 'POST', function (r) {
                     if (r.status) {
                         $("#datagrid").datagrid('reload');
                     } else {
@@ -253,30 +259,33 @@
 <div id="mm1" class="easyui-menu" style="width:120px;display: none">
     <div icon='icon-add' onclick="addrow()">新增</div>
 </div>
-<div id="dialog" title="添加楼宇" style="width:400px;height:400px;">
+<div id="dialog" title="添加房屋" style="width:400px;height:400px;">
     <div style="padding:20px 20px 40px 80px;">
         <form id="form1" method="post">
             <table>
                 <tr>
-                    <td>名称：</td>
-                    <td><input name="Name" class="easyui-validatebox" required="true"/></td>
+                    <td>楼宇：</td>
+                    <td><select class="easyui-combobox" name="BuildingId" style="width:120px;" required="true">
+                        {{range .buildings}}
+                        <option value="{{.Id}}">{{.Name}}</option>
+                        {{end}}
+                    </select></td>
                 </tr>
                 <tr>
-                    <td>层数：</td>
-                    <td><input name="Floors" class="easyui-validatebox" required="true"/></td>
+                    <td>单元名称：</td>
+                    <td><input name="UnitName" class="easyui-validatebox" required="true"/></td>
                 </tr>
                 <tr>
-                    <td>高度：</td>
-                    <td><input name="Height" class="easyui-validatebox" required="true"/></td>
+                    <td>房号：</td>
+                    <td><input name="HouseNo" class="easyui-validatebox" required="true"/></td>
                 </tr>
                 <tr>
                     <td>面积：</td>
                     <td><input name="Area" class="easyui-validatebox" required="true"/></td>
                 </tr>
                 <tr>
-                    <td>建筑日期：</td>
-                    <td><input name="BuildDate" class="easyui-datebox" required="true"
-                               data-options="formatter:myformatter,parser:myparser"/></td>
+                    <td>户主：</td>
+                    <td><input name="OwnerId" class="easyui-validatebox"/></td>
                 </tr>
                 <tr>
                     <td>备注：</td>

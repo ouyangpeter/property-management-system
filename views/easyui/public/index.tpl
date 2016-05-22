@@ -265,7 +265,7 @@
                 <li><a href="#" onclick="addTab('楼宇管理', '/pms/building/index')">楼宇管理</a></li>
             </ul>
             <ul>
-                <li><a href="#" onclick="addTab('房产管理', '')">房产管理</a></li>
+                <li><a href="#" onclick="addTab('房屋管理', '/pms/house/index')">房屋管理</a></li>
             </ul>
         </div>
         <div title='车位管理'>

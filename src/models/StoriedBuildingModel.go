@@ -18,6 +18,7 @@ type StoriedBuilding struct {
     Area      int           `form:"Area" valid:"Required"`
     BuildDate time.Time     `orm:"type(date)" form:"BuildDate" valid:"Required"`
     Remark    string        `orm:"null;size(200)" form:"Remark" valid:"MaxSize(200)"`
+    Houses    []*House      `orm:"reverse(many)"`
 }
 
 type BuildingQueryParam struct {
@@ -36,10 +37,10 @@ func GetBuildingList(page int64, page_size int64, sort string, queryData Buildin
     storiedBuilding := new(StoriedBuilding)
     qs := o.QueryTable(storiedBuilding)
     //log.Println(queryData)
-    if len(queryData.Name) > 0{
+    if len(queryData.Name) > 0 {
         qs = qs.Filter("Name__contains", queryData.Name)
     }
-    if queryData.Area > 0{
+    if queryData.Area > 0 {
         qs = qs.Filter("Area", queryData.Area)
     }
     if queryData.Floors > 0 {
@@ -122,10 +123,17 @@ func UpdateBuilding(building *StoriedBuilding) (int64, error) {
     if !building.BuildDate.IsZero() {
         newBuilding["BuildDate"] = building.BuildDate
     }
-    if len(newBuilding) == 0{
+    if len(newBuilding) == 0 {
         return 0, errors.New("update field is empty")
     }
     var table StoriedBuilding
     num, err := o.QueryTable(table).Filter("Id", building.Id).Update(newBuilding)
     return num, err
+}
+
+func GetAllBuilding() (buildings []orm.Params, count int64) {
+    o := orm.NewOrm()
+    var table StoriedBuilding
+    count, _ = o.QueryTable(table).Values(&buildings)
+    return buildings, count
 }

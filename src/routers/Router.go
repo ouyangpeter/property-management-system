@@ -23,9 +23,15 @@ func init() {
     pmsNs := beego.NewNamespace("/pms",
         beego.NSNamespace("/building",
             beego.NSRouter("/index", &pms.BuildingController{}, "*:Index"),
-            beego.NSRouter("/addBuilding", &pms.BuildingController{}, "*:AddBuilding"),
-            beego.NSRouter("/deleteBuilding", &pms.BuildingController{}, "*:DeleteBuilding"),
-            beego.NSRouter("/updateBuilding", &pms.BuildingController{}, "*:UpdateBuilding"),
+            beego.NSRouter("/addBuilding", &pms.BuildingController{}, "*:Add"),
+            beego.NSRouter("/deleteBuilding", &pms.BuildingController{}, "*:Delete"),
+            beego.NSRouter("/updateBuilding", &pms.BuildingController{}, "*:Update"),
+        ),
+        beego.NSNamespace("/house",
+            beego.NSRouter("/index", &pms.HouseController{}, "*:Index"),
+            beego.NSRouter("/addHouse", &pms.HouseController{}, "*:Add"),
+            beego.NSRouter("/deleteHouse", &pms.HouseController{}, "*:Delete"),
+            beego.NSRouter("/updateHouse", &pms.HouseController{}, "*:Update"),
         ),
     )
     beego.AddNamespace(publicNs)

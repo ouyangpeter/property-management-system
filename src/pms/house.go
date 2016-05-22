@@ -2,27 +2,29 @@ package pms
 
 import (
     m "property-management-system/src/models"
-    "github.com/astaxie/beego/orm"
 )
 
-type BuildingController struct {
+type HouseController struct {
     CommonController
 }
 
-func (this *BuildingController)Index() {
+func (this *HouseController)Index() {
     page, _ := this.GetInt64("page")
     page_size, _ := this.GetInt64("rows")
     sort := this.GetString("sort")
     order := this.GetString("order")
-    name := this.GetString("name")
-    floors, _ := this.GetInt("floors")
-    height, _ := this.GetInt("height")
+    floor, _ := this.GetInt("floor")
     area, _ := this.GetInt("area")
-    queryData := m.BuildingQueryParam{
-        Name:name,
-        Floors:floors,
+    houseNo := this.GetString("house_no")
+    unitName := this.GetString("unit_name")
+    ownerName := this.GetString("owner_name")
+
+    queryData := m.HouseQueryParam{
+        HouseNo:houseNo,
         Area: area,
-        Height:height,
+        Floor: floor,
+        OwnerName:ownerName,
+        UnitName:unitName,
     }
 
     if len(order) > 0 {
@@ -32,31 +34,35 @@ func (this *BuildingController)Index() {
     } else {
         sort = "Id"
     }
-    buildings, count := m.GetBuildingList(page, page_size, sort, queryData)
+    houses, count := m.GetHouseList(page, page_size, sort, queryData)
 
     if this.IsAjax() {
-        if buildings == nil{
-            buildings = make([]orm.Params, 0)
+        if houses == nil {
+            houses = make([]m.House, 0)
         }
-        this.Data["json"] = &map[string]interface{}{"total":count, "rows":buildings}
+        this.Data["json"] = &map[string]interface{}{"total":count, "rows":houses}
+        //log.Println(houses[0].Building)
         this.ServeJSON()
         return
     } else {
-        this.Data["building"] = &buildings
+        buildings, _ := m.GetAllBuilding()
+        this.Data["buildings"] = &buildings
+        this.Data["houses"] = &houses
         if this.GetTemplateType() != "easyui" {
             this.Layout = this.GetTemplateType() + "/public/layout.tpl"
         }
-        this.TplName = this.GetTemplateType() + "/pms/building.tpl"
+        this.TplName = this.GetTemplateType() + "/pms/house.tpl"
     }
+
 }
 
-func (this *BuildingController)Add() {
-    storiedBuilding := m.StoriedBuilding{}
-    if err := this.ParseForm(&storiedBuilding); err != nil {
+func (this *HouseController)Add() {
+    house := m.House{}
+    if err := this.ParseForm(&house); err != nil {
         this.Rsp(false, err.Error())
         return
     }
-    id, err := m.AddBuilding(&storiedBuilding)
+    id, err := m.AddHouse(&house)
     if id > 0 && err == nil {
         this.Rsp(true, "Success")
         return
@@ -66,9 +72,9 @@ func (this *BuildingController)Add() {
     }
 }
 
-func (this *BuildingController) Delete() {
+func (this *HouseController)Delete() {
     Id, _ := this.GetInt64("Id")
-    status, err := m.DeleteBuildingById(Id)
+    status, err := m.DeleteHouseById(Id)
     if status > 0 && err == nil {
         this.Rsp(true, "Success")
         return
@@ -78,13 +84,13 @@ func (this *BuildingController) Delete() {
     }
 }
 
-func (this *BuildingController) Update() {
-    building := m.StoriedBuilding{}
-    if err := this.ParseForm(&building); err != nil {
+func (this *HouseController)Update(){
+    house := m.House{}
+    if err := this.ParseForm(&house); err != nil {
         this.Rsp(false, err.Error())
         return
     }
-    id, err := m.UpdateBuilding(&building)
+    id, err := m.UpdateHouse(&house)
     if err == nil && id > 0 {
         this.Rsp(true, "Success")
         return
@@ -92,4 +98,5 @@ func (this *BuildingController) Update() {
         this.Rsp(false, err.Error())
         return
     }
+
 }
