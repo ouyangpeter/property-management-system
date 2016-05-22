@@ -1,9 +1,5 @@
 {{template "../public/header.tpl"}}
 <script type="text/javascript">
-    var statuslist = [
-        {statusid: '1', name: '禁用'},
-        {statusid: '2', name: '启用'}
-    ];
     var myview = $.extend({}, $.fn.datagrid.defaults.view, {
         onAfterRender: function (target) {
             $.fn.datagrid.defaults.view.onAfterRender.call(this, target);

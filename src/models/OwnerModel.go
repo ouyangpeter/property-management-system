@@ -8,6 +8,7 @@ type Owner struct {
     PhoneNumber string
     IdCard      string
     Houses      []*House `orm:"reverse(many)"`
+    User        *User `orm:"reverse(one)"`
 }
 
 func init() {
