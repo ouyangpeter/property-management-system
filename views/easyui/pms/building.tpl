@@ -4,10 +4,30 @@
         {statusid: '1', name: '禁用'},
         {statusid: '2', name: '启用'}
     ];
+    var myview = $.extend({}, $.fn.datagrid.defaults.view, {
+        onAfterRender: function (target) {
+            $.fn.datagrid.defaults.view.onAfterRender.call(this, target);
+            var opts = $(target).datagrid('options');
+            var vc = $(target).datagrid('getPanel').children('div.datagrid-view');
+            vc.children('div.datagrid-empty').remove();
+            if (!$(target).datagrid('getRows').length) {
+                var d = $('<div class="datagrid-empty"></div>').html(opts.emptyMsg || 'no records').appendTo(vc);
+                d.css({
+                    position: 'absolute',
+                    left: 0,
+                    top: 50,
+                    width: '100%',
+                    textAlign: 'center'
+                });
+            }
+        }
+    });
     var URL = "/pms/building";
     $(function () {
         //楼宇列表
         $("#datagrid").datagrid({
+//            view: myview,
+//            emptyMsg: 'no records found',
             title: '楼宇列表',
             url: URL + '/index',
             method: 'POST',
@@ -18,7 +38,7 @@
             singleSelect: true,
             idField: 'Id',
             pagination: true,
-            fit:true,
+            fit: true,
             pageSize: 20,
             pageList: [10, 20, 30, 50, 100],
             columns: [[
@@ -79,10 +99,18 @@
                 });
             },
             onLoadSuccess: function (data) {
-                if (data.rows.length == 0) {
-                    var body = $(this).data().datagrid.dc.body2;
-                    body.find('table tbody').append('<tr><td width="' + body.width() + '" style="height: 25px; text-align: center;" colspan="6">没有数据</td></tr>');
+                if (data.total == 0) {
+                    //添加一个新数据行，第一列的值为你需要的提示信息，然后将其他列合并到第一列来，注意修改colspan参数为你columns配置的总列数
+                    $(this).datagrid('appendRow', {Id: '<div style="text-align:center;color:red">没有相关记录！</div>'}).datagrid('mergeCells', {
+                        index: 0,
+                        field: 'Id',
+                        colspan: 8
+                    })
+                    //隐藏分页导航条，这个需要熟悉datagrid的html结构，直接用jquery操作DOM对象，easyui datagrid没有提供相关方法隐藏导航条
+                    $(this).closest('div.datagrid-wrap').find('div.datagrid-pager').hide();
                 }
+                //如果通过调用reload方法重新加载数据有数据时显示出分页导航容器
+                else $(this).closest('div.datagrid-wrap').find('div.datagrid-pager').show();
             }
         });
         //创建添加楼宇窗口
@@ -217,7 +245,7 @@
             postData.area = $('#query_area').val();
         }
         if ($('#query_height').val() != '') {
-            postData.area = $('#query_height').val();
+            postData.height = $('#query_height').val();
         }
         $('#datagrid').datagrid('load', postData);
     }
@@ -333,5 +361,6 @@
             return new Date();
         }
     }
+
 </script>
 </html>

@@ -2,6 +2,7 @@ package pms
 
 import (
     m "property-management-system/src/models"
+    "github.com/astaxie/beego/orm"
 )
 
 type BuildingController struct {
@@ -34,6 +35,9 @@ func (this *BuildingController)Index() {
     buildings, count := m.GetBuildingList(page, page_size, sort, queryData)
 
     if this.IsAjax() {
+        if buildings == nil{
+            buildings = make([]orm.Params, 0)
+        }
         this.Data["json"] = &map[string]interface{}{"total":count, "rows":buildings}
         this.ServeJSON()
         return

@@ -22,6 +22,7 @@ type User struct {
     LastLoginTime time.Time `orm:"null;type(datetime)" form:"-"`
     Created       time.Time `orm:"type(datetime);auto_now_add" form:"-"`
     Modified      time.Time `orm:"type(datetime);auto_now;null" form:"-"`
+    Owner         *Owner    `orm:"null;rel(one);on_delete(set_null)"`
 }
 
 func init() {
