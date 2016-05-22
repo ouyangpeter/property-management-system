@@ -3,11 +3,19 @@ package pms
 import (
     . "property-management-system/src"
     "property-management-system/src/models"
+    "time"
 )
 
 type MainController struct {
     CommonController
     TemplateType string
+}
+
+func updateUserLoginInfo(u models.User) {
+    user := models.User{Id:u.Id}
+    user.LastLoginTime = time.Now()
+    models.UpdateUser(&user)
+
 }
 
 //登录
@@ -20,6 +28,7 @@ func (this *MainController) Login() {
         if err == nil {
             this.SetSession("userinfo", user)
             this.Rsp(true, "登录成功")
+            updateUserLoginInfo(user)
             return
         } else {
             this.Rsp(false, err.Error())
@@ -53,7 +62,7 @@ func (this *MainController) Logout() {
 
 func (this *MainController) Changepwd() {
     userinfo := this.GetSession("userinfo")
-    if userinfo == nil{
+    if userinfo == nil {
         this.Ctx.Redirect(302, PMS_AUTH_GATEWAY)
     }
     oldPassword := this.GetString("oldPassword")
@@ -68,10 +77,10 @@ func (this *MainController) Changepwd() {
         u.Id = user.Id
         u.Password = newPassword
         id, err := models.UpdateUser(&u)
-        if err == nil && id > 0{
+        if err == nil && id > 0 {
             this.Rsp(true, "密码修改成功")
             return
-        }else{
+        } else {
             this.Rsp(false, err.Error())
             return
         }

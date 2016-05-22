@@ -57,10 +57,13 @@ func UpdateUser(u *User) (int64, error) {
     if len(u.Password) > 0 {
         user["Password"] = lib.Pwdhash(u.Password)
     }
-    if u.Status != 0{
+    if u.Status != 0 {
         user["Status"] = u.Status
     }
-    if len(user) == 0{
+    if !u.LastLoginTime.IsZero() {
+        user["LastLoginTime"] = u.LastLoginTime
+    }
+    if len(user) == 0 {
         return 0, errors.New("update field is empty")
     }
 

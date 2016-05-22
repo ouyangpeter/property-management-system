@@ -122,6 +122,9 @@ func UpdateBuilding(building *StoriedBuilding) (int64, error) {
     if !building.BuildDate.IsZero() {
         newBuilding["BuildDate"] = building.BuildDate
     }
+    if len(newBuilding) == 0{
+        return 0, errors.New("update field is empty")
+    }
     var table StoriedBuilding
     num, err := o.QueryTable(table).Filter("Id", building.Id).Update(newBuilding)
     return num, err
