@@ -1,5 +1,3 @@
-*.swp
 .idea/*
-*.tmp
 target/*
 property-management-system
