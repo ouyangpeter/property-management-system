@@ -13,18 +13,18 @@ func (this *HouseController)Index() {
     page_size, _ := this.GetInt64("rows")
     sort := this.GetString("sort")
     order := this.GetString("order")
-    floor, _ := this.GetInt("floor")
     area, _ := this.GetInt("area")
     houseNo := this.GetString("house_no")
     unitName := this.GetString("unit_name")
-    ownerName := this.GetString("owner_name")
+    buildingId, _ := this.GetInt64("building_id")
+    ownerId, _ := this.GetInt64("owner_id")
 
     queryData := m.HouseQueryParam{
         HouseNo:houseNo,
         Area: area,
-        Floor: floor,
-        OwnerName:ownerName,
         UnitName:unitName,
+        OwnerId:ownerId,
+        BuildingId:buildingId,
     }
 
     if len(order) > 0 {
@@ -84,7 +84,7 @@ func (this *HouseController)Delete() {
     }
 }
 
-func (this *HouseController)Update(){
+func (this *HouseController)Update() {
     house := m.House{}
     if err := this.ParseForm(&house); err != nil {
         this.Rsp(false, err.Error())

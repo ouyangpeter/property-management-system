@@ -22,11 +22,11 @@ type House struct {
 }
 
 type HouseQueryParam struct {
-    UnitName  string
-    HouseNo   string
-    Area      int
-    Floor     int
-    OwnerName string
+    UnitName   string
+    HouseNo    string
+    Area       int
+    OwnerId    int64
+    BuildingId int64
 }
 
 func init() {
@@ -49,7 +49,26 @@ func GetHouseList(page int64, page_size int64, sort string, queryData HouseQuery
     o := orm.NewOrm()
     house := new(House)
     qs := o.QueryTable(house)
-    //need filter
+    if len(queryData.UnitName) > 0{
+        qs = qs.Filter("UnitName__contains", queryData.UnitName)
+    }
+
+    if len(queryData.HouseNo) > 0{
+        qs = qs.Filter("HouseNo__contains", queryData.HouseNo)
+    }
+
+    if queryData.Area > 0{
+        qs = qs.Filter("Area", queryData.Area)
+    }
+
+    if queryData.BuildingId > 0{
+        qs = qs.Filter("Building__Id", queryData.BuildingId)
+    }
+
+    if queryData.OwnerId > 0{
+        qs = qs.Filter("Owner__Id", queryData.OwnerId)
+    }
+
 
     var offset int64
     if page <= 1 {

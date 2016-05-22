@@ -22,7 +22,9 @@
                 {
                     field: 'BuildingName', title: '楼宇名称', width: 40,
                     formatter: function (value, rec) {
-                        return rec.Building.Name;
+                        if (rec != null && rec.Building != null) {
+                            return rec.Building.Name;
+                        }
                     }
                 },
                 {field: 'UnitName', title: '单元名称', width: 30, align: 'center', editor: 'text', sortable: true},
@@ -31,7 +33,7 @@
                 {
                     field: 'OnwerName', title: '户主', width: 30, align: 'center',
                     formatter: function (value, rec) {
-                        if (rec.Owner != null) {
+                        if (rec != null && rec.Owner != null) {
                             return rec.Owner.Name;
                         } else {
                             return "";
@@ -46,8 +48,7 @@
                     },
                     sortable: true
                 },
-                {field: 'Remark', title: '备注', width: 50, align: 'center', editor: 'text'},
-
+                {field: 'Remark', title: '备注', width: 50, align: 'center', editor: 'text'}
             ]],
             onAfterEdit: function (index, data, changes) {
                 if (vac.isEmpty(changes)) {
@@ -81,13 +82,14 @@
                 });
             },
             onLoadSuccess: function (data) {
+//                console.log(data.total)
                 if (data.total == 0) {
                     //添加一个新数据行，第一列的值为你需要的提示信息，然后将其他列合并到第一列来，注意修改colspan参数为你columns配置的总列数
                     $(this).datagrid('appendRow', {Id: '<div style="text-align:center;color:red">没有相关记录！</div>'}).datagrid('mergeCells', {
                         index: 0,
                         field: 'Id',
                         colspan: 8
-                    })
+                    });
                     //隐藏分页导航条，这个需要熟悉datagrid的html结构，直接用jquery操作DOM对象，easyui datagrid没有提供相关方法隐藏导航条
                     $(this).closest('div.datagrid-wrap').find('div.datagrid-pager').hide();
                 }
@@ -187,25 +189,31 @@
 
     function Query() {
         var postData = new Object();
-        if ($('#query_name').val() != '') {
-            postData.name = $('#query_name').val();
+
+        if ($('#query_building_id').val() != '0') {
+            postData.building_id = $('#query_building_id').val();
         }
 
-        if ($('#query_floors').val() != '') {
-            postData.floors = $('#query_floors').val();
+        if ($('#query_unit_name').val() != '') {
+            postData.unit_name = $('#query_unit_name').val();
         }
+
         if ($('#query_area').val() != '') {
             postData.area = $('#query_area').val();
         }
-        if ($('#query_height').val() != '') {
-            postData.height = $('#query_height').val();
+
+        if ($('#query_house_no').val() != '') {
+            postData.house_no = $('#query_house_no').val();
+        }
+        if ($('#query_owner_id').val() != '') {
+            postData.owner_id = $('#query_owner_id').val();
         }
         $('#datagrid').datagrid('load', postData);
     }
 </script>
 <body style="padding:2px; margin:0px;" class="panel-noscroll">
 <div class="easyui-layout layout" fit="true">
-    <div data-options="region:'north'" style="margin: 2px; height: 60px;">
+    <div data-options="region:'north'" style="margin: 2px; height: 65px;">
         <div class="panel-header">
             <div class="panel-title">查询条件</div>
             <div class="panel-tool"><a href="javascript:void(0)" class="layout-button-up"></a></div>
@@ -215,15 +223,23 @@
             <table cellpadding="3" cellspacing="3">
                 <tbody>
                 <tr>
-                    <td>名称:</td>
-                    <td><input type="text" id="query_name" value="" size="20"></td>
-                    <td>层数:</td>
-                    <td><input type="text" id="query_floors" value="" size="10"></td>
-                    <td>高度:</td>
-                    <td><input type="text" id="query_height" value="" size="10"></td>
+                    <td>楼宇名称:</td>
+                    <td><select id="query_building_id" name="select_building_id" style="width:120px;" required="true">
+                        <option value="0" selected>--请选择--</option>
+                        {{range .buildings}}
+                        <option value="{{.Id}}">{{.Name}}</option>
+                        {{end}}
+                    </select></td>
+                    <td>单元名称:</td>
+                    <td><input type="text" id="query_unit_name" value="" size="10"></td>
+                    <td>房号:</td>
+                    <td><input type="text" id="query_house_no" value="" size="10"></td>
                     <td>面积:</td>
-                    <td><input type="text" id="query_area" value="" size="10"
+                    <td><input type="text" id="query_area" value="" size="10"></td>
+                    <td>户主:</td>
+                    <td><input type="text" id="query_owner_id" value="" size="10"
                                onkeydown="if(event.keyCode == 13) {Query();}"></td>
+
                     <td><input value="查询" type="button" id="BN_Find" style="width:80px; height:30px;" class="button"
                                onclick="Query();"></td>
                 </tr>
