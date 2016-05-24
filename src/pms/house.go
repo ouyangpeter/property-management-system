@@ -36,6 +36,14 @@ func (this *HouseController)Index() {
     }
     houses, count := m.GetHouseList(page, page_size, sort, queryData)
 
+    for _, house := range houses {
+        if house.Owner != nil {
+            house.Owner.User = nil
+            house.Owner.Houses = nil
+        }
+        house.Building.Houses = nil
+    }
+
     if this.IsAjax() {
         if houses == nil {
             houses = make([]m.House, 0)
@@ -98,5 +106,31 @@ func (this *HouseController)Update() {
         this.Rsp(false, err.Error())
         return
     }
+
+}
+
+func (this *HouseController)GetHouseList() {
+
+    unitName := this.GetString("unit_name")
+    buildingId, _ := this.GetInt64("building_id")
+
+    queryData := m.HouseQueryParam{
+        UnitName:unitName,
+        BuildingId:buildingId,
+    }
+
+    houses, _:= m.GetHouseList(1, 5000, "Id", queryData)
+
+    for _, house := range houses {
+        if house.Owner != nil {
+            house.Owner.User = nil
+            house.Owner.Houses = nil
+        }
+        house.Building.Houses = nil
+    }
+
+    this.Data["json"] = houses
+    this.ServeJSON()
+    return
 
 }

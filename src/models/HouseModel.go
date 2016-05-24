@@ -49,26 +49,25 @@ func GetHouseList(page int64, page_size int64, sort string, queryData HouseQuery
     o := orm.NewOrm()
     house := new(House)
     qs := o.QueryTable(house)
-    if len(queryData.UnitName) > 0{
+    if len(queryData.UnitName) > 0 {
         qs = qs.Filter("UnitName__contains", queryData.UnitName)
     }
 
-    if len(queryData.HouseNo) > 0{
+    if len(queryData.HouseNo) > 0 {
         qs = qs.Filter("HouseNo__contains", queryData.HouseNo)
     }
 
-    if queryData.Area > 0{
+    if queryData.Area > 0 {
         qs = qs.Filter("Area", queryData.Area)
     }
 
-    if queryData.BuildingId > 0{
+    if queryData.BuildingId > 0 {
         qs = qs.Filter("Building__Id", queryData.BuildingId)
     }
 
-    if queryData.OwnerId > 0{
+    if queryData.OwnerId > 0 {
         qs = qs.Filter("Owner__Id", queryData.OwnerId)
     }
-
 
     var offset int64
     if page <= 1 {
@@ -137,4 +136,14 @@ func UpdateHouse(house *House) (int64, error) {
     var houseTable House
     num, err := o.QueryTable(houseTable).Filter("Id", house.Id).Update(newHouse)
     return num, err
+}
+
+func GetHouseListByBuildingId(Id int64) (houses []House, count int64) {
+    o := orm.NewOrm()
+    house := new(House)
+    qs := o.QueryTable(house)
+
+    qs.OrderBy("Id").All(&houses)
+    count, _ = qs.Count()
+    return houses, count
 }

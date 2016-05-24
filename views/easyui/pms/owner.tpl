@@ -1,10 +1,10 @@
 {{template "../public/header.tpl"}}
 <script type="text/javascript">
-    var URL = "/pms/house";
+    var URL = "/pms/owner";
     $(function () {
-        //房屋列表
+        //户主列表
         $("#datagrid").datagrid({
-            title: '房屋列表',
+            title: '户主列表',
             url: URL + '/index',
             method: 'POST',
             pagination: true,
@@ -19,34 +19,29 @@
             pageList: [10, 20, 30, 50, 100],
             columns: [[
                 {field: 'Id', title: 'ID', width: 30, sortable: true},
+                {field: 'Name', title: '姓名', width: 30, align: 'center', editor: 'text', sortable: true},
+                {field: 'PhoneNumber', title: '手机号', width: 30, align: 'center', editor: 'text', sortable: true},
+                {field: 'IdCard', title: '身份证', width: 30, align: 'center', editor: 'text', sortable: true},
+                {field: 'Company', title: '工作单位', width: 30, align: 'center', editor: 'text', sortable: true},
                 {
-                    field: 'BuildingName', title: '楼宇名称', width: 40,
+                    field: 'UserName', title: '用户名', width: 30, align: 'center', editor: 'text', sortable: false,
                     formatter: function (value, rec) {
-                        if (rec != null && rec.Building != null) {
-                            return rec.Building.Name;
-                        }
-                    }
-                },
-                {field: 'UnitName', title: '单元名称', width: 30, align: 'center', editor: 'text', sortable: true},
-                {field: 'HouseNo', title: '房号', width: 30, align: 'center', editor: 'text', sortable: true},
-                {field: 'Area', title: '面积', width: 30, align: 'right', editor: 'numberbox', sortable: true},
-                {
-                    field: 'OnwerName', title: '户主', width: 30, align: 'center',
-                    formatter: function (value, rec) {
-                        if (rec != null && rec.Owner != null) {
-                            return rec.Owner.Name;
+                        if (rec != null && rec.User != null) {
+                            return rec.User.UserName;
                         } else {
                             return "";
                         }
                     }
                 },
                 {
-                    field: 'Created', title: '添加时间', width: 80, align: 'center',
-                    formatter: function (value, row, index) {
-                        if (value) return phpjs.date("Y-m-d H:i:s", phpjs.strtotime(value));
-                        return value;
-                    },
-                    sortable: true
+                    field: 'Email', title: '邮箱', width: 50, align: 'center', editor: 'text', sortable: false,
+                    formatter: function (value, rec) {
+                        if (rec != null && rec.User != null) {
+                            return rec.User.Email;
+                        } else {
+                            return "";
+                        }
+                    }
                 },
                 {field: 'Remark', title: '备注', width: 50, align: 'center', editor: 'text'}
             ]],
@@ -131,9 +126,7 @@
                 }
             }]
         });
-
     })
-
 
     function editrow() {
         if (!$("#datagrid").datagrid("getSelected")) {
@@ -162,7 +155,7 @@
         $("#datagrid").datagrid("reload");
     }
 
-    //添加弹窗
+    //添加房屋弹窗
     function addrow() {
         $("#dialog").dialog('open');
         $("#form1").form('clear');
@@ -227,14 +220,14 @@
                 <tr>
                     <td>楼宇名称:</td>
                     <td><input class="easyui-combobox"
-                               name="select_building_id"
+                               id="query_building_id"
                                data-options="
     valueField: 'Id',
     textField: 'Name',
     url: '/pms/building/buildingList'
     "></td>
                     <td>单元名称:</td>
-                    <td><input type="text" id="query_unit_name" value="" size="10"></td>
+                    <td><input class="easyui-combobox" id="query_unit_name"></td>
                     <td>房号:</td>
                     <td><input type="text" id="query_house_no" value="" size="10"></td>
                     <td>面积:</td>
@@ -278,42 +271,65 @@
 <div id="mm1" class="easyui-menu" style="width:120px;display: none">
     <div icon='icon-add' onclick="addrow()">新增</div>
 </div>
-<div id="dialog" title="添加房屋" style="width:400px;height:400px;">
+<div id="dialog" title="添加户主" style="width:400px;height:400px;">
     <div style="padding:20px 20px 40px 80px;">
         <form id="form1" method="post">
             <table>
                 <tr>
                     <td>楼宇：</td>
-                    <!--<td><select class="easyui-combobox" name="BuildingId" style="width:120px;" required="true">-->
-                    <!--{{range .buildings}}-->
-                    <!--<option value="{{.Id}}">{{.Name}}</option>-->
-                    <!--{{end}}-->
-                    <!--</select></td>-->
-                    <td>
-                        <input class="easyui-combobox"
+                    <td><input class="easyui-combobox"
                                name="BuildingId"
-                               id="BuildingId" data-options="
+                               data-options="
     valueField: 'Id',
     textField: 'Name',
-    url: '/pms/building/buildingList'
-    "></td>
-                    </td>
+    url: '/pms/building/buildingList',
+    onSelect: function(rec){
+    $('#UnitName').combobox('clear');
+    $('#HouseId').combobox('clear');
+    var url = '/pms/building/unitList?BuildingId='+rec.Id;
+    $('#UnitName').combobox('reload', url);
+    }
+    " required="true"></td>
                 </tr>
                 <tr>
                     <td>单元名称：</td>
-                    <td><input name="UnitName" class="easyui-validatebox" required="true"/></td>
+                    <td><select class="easyui-combobox" id="UnitName" style="width:120px;" required="true"
+                                data-options="valueField:'UnitName',textField:'UnitName',onSelect: function(rec){
+    $('#HouseId').combobox('clear');
+    var url = '/pms/house/houseList?building_id='+rec.Building.Id+'&unit_name='+rec.UnitName;
+    $('#HouseId').combobox('reload', url);
+    }">
+                    </select></td>
                 </tr>
                 <tr>
                     <td>房号：</td>
-                    <td><input name="HouseNo" class="easyui-validatebox" required="true"/></td>
+                    <td><select class="easyui-combobox" id="HouseId" name="HouseId" style="width:120px;"
+                                required="true" data-options="valueField:'Id',textField:'HouseNo', method:'post'">
+                    </select></td>
                 </tr>
                 <tr>
-                    <td>面积：</td>
-                    <td><input name="Area" class="easyui-validatebox" required="true"/></td>
+                    <td>姓名：</td>
+                    <td><input name="Name" class="easyui-validatebox" required="true"/></td>
                 </tr>
                 <tr>
-                    <td>户主：</td>
-                    <td><input name="OwnerId" class="easyui-validatebox"/></td>
+                    <td>手机号：</td>
+                    <td><input name="PhoneNumber" class="easyui-validatebox"/></td>
+                </tr>
+                <tr>
+                    <td>身份证：</td>
+                    <td><input name="IdCard" class="easyui-validatebox"/></td>
+                </tr>
+                <tr>
+                    <td>工作单位：</td>
+                    <td><input name="Company" class="easyui-validatebox"/></td>
+                </tr>
+                <tr>
+                    <td>用户名：</td>
+                    <td><input name="UserName" class="easyui-validatebox" required="true"/></td>
+                </tr>
+                <tr>
+                    <td>密码：</td>
+                    <td><input name="Password" class="easyui-validatebox" required="true"/></td>
                 </tr>
                 <tr>
                     <td>备注：</td>

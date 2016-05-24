@@ -35,7 +35,7 @@ func (this *BuildingController)Index() {
     buildings, count := m.GetBuildingList(page, page_size, sort, queryData)
 
     if this.IsAjax() {
-        if buildings == nil{
+        if buildings == nil {
             buildings = make([]orm.Params, 0)
         }
         this.Data["json"] = &map[string]interface{}{"total":count, "rows":buildings}
@@ -92,4 +92,38 @@ func (this *BuildingController) Update() {
         this.Rsp(false, err.Error())
         return
     }
+}
+
+func (this *BuildingController) GetAllBuildingList() {
+    buildings, _ := m.GetBuildingList(1, 5000, "Id", m.BuildingQueryParam{})
+    this.Data["json"] = buildings
+    this.ServeJSON()
+    return
+}
+
+func (this *BuildingController) GetUnitListByBuildingId() {
+    Id, _ := this.GetInt64("BuildingId")
+    houses, _ := m.GetHouseList(1, 5000, "UnitName", m.HouseQueryParam{BuildingId:Id})
+
+    for _, house := range houses {
+        if house.Owner != nil{
+            house.Owner.User = nil
+            house.Owner.Houses = nil
+        }
+        house.Building.Houses = nil
+    }
+    //简单去重
+    found := make(map[string]bool)
+    total := 0
+    for i, val := range houses{
+        if _, ok := found[val.UnitName]; !ok{
+            found[val.UnitName] = true
+            houses[total] = houses[i]
+            total++
+        }
+    }
+    houses = houses[:total]
+    this.Data["json"] = houses
+    this.ServeJSON()
+    return
 }

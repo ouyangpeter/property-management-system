@@ -60,14 +60,43 @@ func insertTestData() {
         insertBuilding("test" + strconv.Itoa(i))
     }
 
+    user := new(User)
+    user.UserName = "sep"
+    user.Password = Pwdhash("123456")
+    user.Nickname = "sep"
+    user.Email  = "123@123.com"
+    user.Type = 11
+    user.Status = 2
+    _, err := o.Insert(user)
+    if err != nil {
+        fmt.Println(err.Error())
+        os.Exit(-1)
+    } else {
+        fmt.Println("insert test user end")
+    }
+    owner := new(Owner)
+    owner.IdCard = "123123123123"
+    owner.Name = "张三"
+    owner.User = user
+    owner.PhoneNumber = "12112122222"
+    owner.Company = "测试单位"
+    owner.Remark = "测试备注"
+    _, err = o.Insert(owner)
+    if err != nil {
+        fmt.Println(err.Error())
+        os.Exit(-1)
+    } else {
+        fmt.Println("insert test owner with user end")
+    }
+
     b := new(StoriedBuilding)
-    b.Name = "龙翔苑"
+    b.Name = "翠竹苑"
     b.Height = 50
     b.Floors = 11
     b.Area = 800
     b.BuildDate = time.Now()
     o := orm.NewOrm()
-    _, err := o.Insert(b)
+    _, err = o.Insert(b)
     if err != nil {
         fmt.Println(err.Error())
         os.Exit(-1)
@@ -78,6 +107,7 @@ func insertTestData() {
     house := new(House)
     house.Area = 100
     house.Building = b
+    house.Owner = owner
     house.HouseNo = "301"
     house.UnitName = "2"
     _, err = o.Insert(house)

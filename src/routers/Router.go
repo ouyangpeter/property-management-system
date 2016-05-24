@@ -26,12 +26,18 @@ func init() {
             beego.NSRouter("/addBuilding", &pms.BuildingController{}, "*:Add"),
             beego.NSRouter("/deleteBuilding", &pms.BuildingController{}, "*:Delete"),
             beego.NSRouter("/updateBuilding", &pms.BuildingController{}, "*:Update"),
+            beego.NSRouter("/buildingList", &pms.BuildingController{}, "*:GetAllBuildingList"),
+            beego.NSRouter("/unitList", &pms.BuildingController{}, "*:GetUnitListByBuildingId"),
         ),
         beego.NSNamespace("/house",
             beego.NSRouter("/index", &pms.HouseController{}, "*:Index"),
             beego.NSRouter("/addHouse", &pms.HouseController{}, "*:Add"),
             beego.NSRouter("/deleteHouse", &pms.HouseController{}, "*:Delete"),
             beego.NSRouter("/updateHouse", &pms.HouseController{}, "*:Update"),
+            beego.NSRouter("/houseList", &pms.HouseController{}, "*:GetHouseList"),
+        ),
+        beego.NSNamespace("/owner",
+            beego.NSRouter("/index", &pms.OwnerController{}, "*:Index"),
         ),
     )
     beego.AddNamespace(publicNs)

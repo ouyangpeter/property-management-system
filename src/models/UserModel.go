@@ -14,7 +14,7 @@ type User struct {
     UserName      string    `orm:"unique;size(32)" form:"Username"  valid:"Required;MaxSize(20);MinSize(6)"`
     Password      string    `orm:"size(128)" form:"Password" valid:"Required;MaxSize(70);MinSize(50)"`
     RePassword    string    `orm:"-" form:"Repassword" valid:"Required"`
-    Nickname      string    `orm:"size(32)" form:"Nickname" valid:"Required;MaxSize(20);MinSize(2)"`
+    Nickname      string    `orm:"size(32)" form:"Nickname" valid:"MaxSize(20);MinSize(2)"`
     Type          int       `orm:"default(11)" valid:"Required;Range(11,12)"`
     Email         string    `orm:"size(32)" form:"Email" valid:"Email"`
     Remark        string    `orm:"null;size(200)" form:"Remark" valid:"MaxSize(200)"`
@@ -22,7 +22,7 @@ type User struct {
     LastLoginTime time.Time `orm:"null;type(datetime)" form:"-"`
     Created       time.Time `orm:"type(datetime);auto_now_add" form:"-"`
     Modified      time.Time `orm:"type(datetime);auto_now;null" form:"-"`
-    Owner         *Owner    `orm:"null;rel(one);on_delete(set_null)"`
+    Owner         *Owner    `orm:"null;reverse(one);on_delete(set_null)"`
 }
 
 func init() {
