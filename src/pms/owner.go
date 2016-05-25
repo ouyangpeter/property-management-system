@@ -9,12 +9,35 @@ type OwnerController struct {
 }
 
 func (this *OwnerController)Index() {
+    //building_id:101
+    //unit_name:2
+    //house_id:1
+    //owner_name:123
+    //owner_phone:456
+    //owner_idcard:789
+    //owner_company:10
+    //page:1
+    //rows:20
     page, _ := this.GetInt64("page")
     page_size, _ := this.GetInt64("rows")
     sort := this.GetString("sort")
     order := this.GetString("order")
+    buildingId, _ := this.GetInt64("building_id")
+    unitName := this.GetString("unit_name")
+    houseId, _ := this.GetInt64("house_id")
+    ownerName := this.GetString("owner_name")
+    ownerPhone := this.GetString("owner_phone")
+    ownerIdCard := this.GetString("owner_idcard")
+    ownerCompany := this.GetString("owner_company")
 
     queryData := m.OwnerQueryParam{
+        Name:ownerName,
+        BuildingId:buildingId,
+        UnitName:unitName,
+        HouseId:houseId,
+        PhoneNumber:ownerPhone,
+        IdCard:ownerIdCard,
+        Company:ownerCompany,
     }
 
     if len(order) > 0 {
@@ -70,6 +93,22 @@ func (this *OwnerController)Delete() {
     Id, _ := this.GetInt64("Id")
     status, err := m.DeleteOwnerById(Id)
     if status > 0 && err == nil {
+        this.Rsp(true, "Success")
+        return
+    } else {
+        this.Rsp(false, err.Error())
+        return
+    }
+}
+
+func (this *OwnerController)Update() {
+    owner := m.Owner{}
+    if err := this.ParseForm(&owner); err != nil {
+        this.Rsp(false, err.Error())
+        return
+    }
+    id, err := m.UpdateOwner(&owner)
+    if err == nil && id > 0 {
         this.Rsp(true, "Success")
         return
     } else {

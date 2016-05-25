@@ -33,16 +33,6 @@
                         }
                     }
                 },
-                {
-                    field: 'Email', title: '邮箱', width: 50, align: 'center', editor: 'text', sortable: false,
-                    formatter: function (value, rec) {
-                        if (rec != null && rec.User != null) {
-                            return rec.User.Email;
-                        } else {
-                            return "";
-                        }
-                    }
-                },
                 {field: 'Remark', title: '备注', width: 50, align: 'center', editor: 'text'}
             ]],
             onAfterEdit: function (index, data, changes) {
@@ -50,7 +40,7 @@
                     return;
                 }
                 changes.Id = data.Id;
-                vac.ajax(URL + '/updateHouse', changes, 'POST', function (r) {
+                vac.ajax(URL + '/updateOwner', changes, 'POST', function (r) {
                     if (!r.status) {
                         vac.alert(r.info);
                     } else {
@@ -83,7 +73,7 @@
                     $(this).datagrid('appendRow', {Id: '<div style="text-align:center;color:red">没有相关记录！</div>'}).datagrid('mergeCells', {
                         index: 0,
                         field: 'Id',
-                        colspan: 8
+                        colspan: 7
                     });
                     //隐藏分页导航条，这个需要熟悉datagrid的html结构，直接用jquery操作DOM对象，easyui datagrid没有提供相关方法隐藏导航条
                     $(this).closest('div.datagrid-wrap').find('div.datagrid-pager').hide();
@@ -185,30 +175,40 @@
     function Query() {
         var postData = new Object();
 
-        if ($('#query_building_id').val() != '0') {
-            postData.building_id = $('#query_building_id').val();
+        if ($('#query_building_id').combobox('getValue') != '') {
+            postData.building_id = $('#query_building_id').combobox('getValue');
         }
 
-        if ($('#query_unit_name').val() != '') {
-            postData.unit_name = $('#query_unit_name').val();
+        if ($('#query_unit_name').combobox('getValue') != '') {
+            postData.unit_name = $('#query_unit_name').combobox('getValue');
         }
 
-        if ($('#query_area').val() != '') {
-            postData.area = $('#query_area').val();
+        if ($('#query_house_no').combobox('getValue') != '') {
+            postData.house_id = $('#query_house_no').combobox('getValue');
+        }
+        if ($('#query_owner_name').val() != '') {
+            postData.owner_name = $('#query_owner_name').val();
         }
 
-        if ($('#query_house_no').val() != '') {
-            postData.house_no = $('#query_house_no').val();
+        if ($('#query_owner_phone').val() != '') {
+            postData.owner_phone = $('#query_owner_phone').val();
+
         }
-        if ($('#query_owner_id').val() != '') {
-            postData.owner_id = $('#query_owner_id').val();
+        if ($('#query_owner_idcard').val() != '') {
+            postData.owner_idcard = $('#query_owner_idcard').val();
         }
+
+        if ($('#query_owner_company').val() != ''){
+            postData.owner_company = $('#query_owner_company').val();
+        }
+
+
         $('#datagrid').datagrid('load', postData);
     }
 </script>
 <body style="padding:2px; margin:0px;" class="panel-noscroll">
 <div class="easyui-layout layout" fit="true">
-    <div data-options="region:'north'" style="margin: 2px; height: 65px;">
+    <div data-options="region:'north'" style="margin: 2px; height: 85px;">
         <div class="panel-header">
             <div class="panel-title">查询条件</div>
             <div class="panel-tool"><a href="javascript:void(0)" class="layout-button-up"></a></div>
@@ -221,20 +221,39 @@
                     <td>楼宇名称:</td>
                     <td><input class="easyui-combobox"
                                id="query_building_id"
+                               style="width: 100px;"
                                data-options="
     valueField: 'Id',
     textField: 'Name',
-    url: '/pms/building/buildingList'
+    url: '/pms/building/buildingList',
+    onSelect: function(rec){
+    $('#query_unit_name').combobox('clear');
+    $('#query_house_no').combobox('clear');
+    var url = '/pms/building/unitList?BuildingId='+rec.Id;
+    $('#query_unit_name').combobox('reload', url);
+    }
     "></td>
                     <td>单元名称:</td>
-                    <td><input class="easyui-combobox" id="query_unit_name"></td>
+                    <td><input class="easyui-combobox" id="query_unit_name" style="width:60px;" data-options="
+                    valueField:'UnitName',textField:'UnitName',onSelect: function(rec){
+    $('#query_house_no').combobox('clear');
+    var url = '/pms/house/houseList?building_id='+rec.Building.Id+'&unit_name='+rec.UnitName;
+    $('#query_house_no').combobox('reload', url);
+    }
+                    "></td>
                     <td>房号:</td>
-                    <td><input type="text" id="query_house_no" value="" size="10"></td>
-                    <td>面积:</td>
-                    <td><input type="text" id="query_area" value="" size="10"></td>
-                    <td>户主:</td>
-                    <td><input type="text" id="query_owner_id" value="" size="10"
-                               onkeydown="if(event.keyCode == 13) {Query();}"></td>
+                    <td><input class="easyui-combobox" id="query_house_no" style="width: 70px;"
+                               data-options="valueField:'Id',textField:'HouseNo', method:'post'"></td>
+                </tr>
+                <tr>
+                    <td>姓名:</td>
+                    <td><input type="text" id="query_owner_name" value="" size="15"></td>
+                    <td>手机号:</td>
+                    <td><input type="text" id="query_owner_phone" value="" size="15"></td>
+                    <td>身份证:</td>
+                    <td><input type="text" id="query_owner_idcard" value="" size="20"></td>
+                    <td>工作单位:</td>
+                    <td><input type="text" id="query_owner_company" value="" size="18"></td>
 
                     <td><input value="查询" type="button" id="BN_Find" style="width:80px; height:30px;" class="button"
                                onclick="Query();"></td>
@@ -313,11 +332,11 @@
                 </tr>
                 <tr>
                     <td>手机号：</td>
-                    <td><input name="PhoneNumber" class="easyui-validatebox"/></td>
+                    <td><input name="PhoneNumber" class="easyui-validatebox" required="true"/></td>
                 </tr>
                 <tr>
                     <td>身份证：</td>
-                    <td><input name="IdCard" class="easyui-validatebox"/></td>
+                    <td><input name="IdCard" class="easyui-validatebox" required="true"/></td>
                 </tr>
                 <tr>
                     <td>工作单位：</td>

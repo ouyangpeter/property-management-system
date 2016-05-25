@@ -312,10 +312,6 @@
                     <td><input name="Area" class="easyui-validatebox" required="true"/></td>
                 </tr>
                 <tr>
-                    <td>户主：</td>
-                    <td><input name="OwnerId" class="easyui-validatebox"/></td>
-                </tr>
-                <tr>
                     <td>备注：</td>
                     <td><textarea name="Remark" class="easyui-validatebox" validType="length[0,200]"></textarea></td>
                 </tr>
