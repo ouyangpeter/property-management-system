@@ -25,7 +25,7 @@ type HouseQueryParam struct {
     UnitName   string
     HouseNo    string
     Area       int
-    OwnerId    int64
+    OwnerName  string
     BuildingId int64
 }
 
@@ -65,8 +65,9 @@ func GetHouseList(page int64, page_size int64, sort string, queryData HouseQuery
         qs = qs.Filter("Building__Id", queryData.BuildingId)
     }
 
-    if queryData.OwnerId > 0 {
-        qs = qs.Filter("Owner__Id", queryData.OwnerId)
+    if len(queryData.OwnerName) > 0 {
+
+        qs = qs.Filter("Owner__Name", queryData.OwnerName)
     }
 
     var offset int64

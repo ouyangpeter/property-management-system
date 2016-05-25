@@ -17,13 +17,13 @@ func (this *HouseController)Index() {
     houseNo := this.GetString("house_no")
     unitName := this.GetString("unit_name")
     buildingId, _ := this.GetInt64("building_id")
-    ownerId, _ := this.GetInt64("owner_id")
+    ownerName := this.GetString("owner_name")
 
     queryData := m.HouseQueryParam{
         HouseNo:houseNo,
         Area: area,
         UnitName:unitName,
-        OwnerId:ownerId,
+        OwnerName:ownerName,
         BuildingId:buildingId,
     }
 
@@ -119,7 +119,7 @@ func (this *HouseController)GetHouseList() {
         BuildingId:buildingId,
     }
 
-    houses, _:= m.GetHouseList(1, 5000, "Id", queryData)
+    houses, _ := m.GetHouseList(1, 5000, "Id", queryData)
 
     for _, house := range houses {
         if house.Owner != nil {

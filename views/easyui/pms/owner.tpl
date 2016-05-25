@@ -19,12 +19,12 @@
             pageList: [10, 20, 30, 50, 100],
             columns: [[
                 {field: 'Id', title: 'ID', width: 30, sortable: true},
-                {field: 'Name', title: '姓名', width: 30, align: 'center', editor: 'text', sortable: true},
+                {field: 'Name', title: '姓名', width: 30, align: 'center', sortable: true},
                 {field: 'PhoneNumber', title: '手机号', width: 30, align: 'center', editor: 'text', sortable: true},
                 {field: 'IdCard', title: '身份证', width: 30, align: 'center', editor: 'text', sortable: true},
                 {field: 'Company', title: '工作单位', width: 30, align: 'center', editor: 'text', sortable: true},
                 {
-                    field: 'UserName', title: '用户名', width: 30, align: 'center', editor: 'text', sortable: false,
+                    field: 'UserName', title: '用户名', width: 30, align: 'center', sortable: false,
                     formatter: function (value, rec) {
                         if (rec != null && rec.User != null) {
                             return rec.User.UserName;
@@ -92,7 +92,7 @@
                 else $(this).closest('div.datagrid-wrap').find('div.datagrid-pager').show();
             }
         });
-        //创建添加房屋窗口
+        //创建添加户主窗口
         $("#dialog").dialog({
             modal: true,
             resizable: true,
@@ -103,7 +103,7 @@
                 iconCls: 'icon-save',
                 handler: function () {
                     $("#form1").form('submit', {
-                        url: URL + '/addHouse',
+                        url: URL + '/addOwner',
                         onSubmit: function () {
                             return $("#form1").form('validate');
                         },
@@ -171,7 +171,7 @@
                     vac.alert("请选择要删除的行");
                     return;
                 }
-                vac.ajax(URL + '/deleteHouse', {Id: row.Id}, 'POST', function (r) {
+                vac.ajax(URL + '/deleteOwner', {Id: row.Id}, 'POST', function (r) {
                     if (r.status) {
                         $("#datagrid").datagrid('reload');
                     } else {
@@ -326,10 +326,6 @@
                 <tr>
                     <td>用户名：</td>
                     <td><input name="UserName" class="easyui-validatebox" required="true"/></td>
-                </tr>
-                <tr>
-                    <td>密码：</td>
-                    <td><input name="Password" class="easyui-validatebox" required="true"/></td>
                 </tr>
                 <tr>
                     <td>备注：</td>

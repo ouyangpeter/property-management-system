@@ -48,3 +48,32 @@ func (this *OwnerController)Index() {
     }
 
 }
+
+func (this *OwnerController)Add() {
+    owner := m.Owner{}
+    if err := this.ParseForm(&owner); err != nil {
+        this.Rsp(false, err.Error())
+        return
+    }
+    id, err := m.AddOwner(&owner)
+    if id > 0 && err == nil {
+        this.Rsp(true, "Success")
+        return
+    } else {
+        this.Rsp(false, err.Error())
+        return
+    }
+
+}
+
+func (this *OwnerController)Delete() {
+    Id, _ := this.GetInt64("Id")
+    status, err := m.DeleteOwnerById(Id)
+    if status > 0 && err == nil {
+        this.Rsp(true, "Success")
+        return
+    } else {
+        this.Rsp(false, err.Error())
+        return
+    }
+}

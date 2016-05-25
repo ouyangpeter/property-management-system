@@ -207,8 +207,8 @@
         if ($('#query_house_no').val() != '') {
             postData.house_no = $('#query_house_no').val();
         }
-        if ($('#query_owner_id').val() != '') {
-            postData.owner_id = $('#query_owner_id').val();
+        if ($('#query_owner_name').val() != '') {
+            postData.owner_name = $('#query_owner_name').val();
         }
         $('#datagrid').datagrid('load', postData);
     }
@@ -240,7 +240,7 @@
                     <td>面积:</td>
                     <td><input type="text" id="query_area" value="" size="10"></td>
                     <td>户主:</td>
-                    <td><input type="text" id="query_owner_id" value="" size="10"
+                    <td><input type="text" id="query_owner_name" value="" size="10"
                                onkeydown="if(event.keyCode == 13) {Query();}"></td>
 
                     <td><input value="查询" type="button" id="BN_Find" style="width:80px; height:30px;" class="button"
