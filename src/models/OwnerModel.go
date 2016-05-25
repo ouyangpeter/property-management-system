@@ -6,6 +6,7 @@ import (
     "github.com/astaxie/beego/validation"
     "log"
     "errors"
+    "property-management-system/src/lib"
 )
 
 var password0 = "000000"
@@ -104,7 +105,7 @@ func AddOwner(owner *Owner) (int64, error) {
     //先插入user
     user := new(User)
     user.UserName = owner.UserName
-    user.Password = password0
+    user.Password = lib.Pwdhash(password0)
     user.Status = 2
     user.Type = 11
     _, err := o.Insert(user)
