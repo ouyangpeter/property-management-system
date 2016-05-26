@@ -270,7 +270,7 @@
         </div>
         <div title='车位管理'>
             <ul>
-                <li><a href="#" onclick="addTab('车位区域管理', '')">车位区域管理</a></li>
+                <li><a href="#" onclick="addTab('停车场管理', '/pms/parkingLot/index')">停车场管理</a></li>
             </ul>
             <ul>
                 <li><a href="#" onclick="addTab('车位管理', '')">车位管理</a></li>
