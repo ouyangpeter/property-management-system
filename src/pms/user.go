@@ -14,10 +14,15 @@ func (this *UserController)Index() {
     page_size, _ := this.GetInt64("rows")
     sort := this.GetString("sort")
     order := this.GetString("order")
+    userName := this.GetString("user_name")
+    email := this.GetString("email")
+    status, _ := this.GetInt("status")
 
     queryData := m.UserQueryParam{
         Type:12,
-
+        UserName:userName,
+        Email:email,
+        Status:status,
     }
 
     if len(order) > 0 {
@@ -77,4 +82,20 @@ func (this *UserController)Delete() {
         return
     }
 
+}
+
+func (this *UserController)Update() {
+    user := m.User{}
+    if err := this.ParseForm(&user); err != nil {
+        this.Rsp(false, err.Error())
+        return
+    }
+    id, err := m.UpdateUser(&user)
+    if err == nil && id > 0 {
+        this.Rsp(true, "Success")
+        return
+    } else {
+        this.Rsp(false, err.Error())
+        return
+    }
 }

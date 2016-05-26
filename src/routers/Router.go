@@ -46,6 +46,7 @@ func init() {
             beego.NSRouter("/index", &pms.UserController{}, "*:Index"),
             beego.NSRouter("/addUser", &pms.UserController{}, "*:Add"),
             beego.NSRouter("/deleteUser", &pms.UserController{}, "*:Delete"),
+            beego.NSRouter("/updateUser", &pms.UserController{}, "*:Update"),
         ),
     )
     beego.AddNamespace(publicNs)

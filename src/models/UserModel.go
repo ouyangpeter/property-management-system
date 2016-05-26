@@ -102,6 +102,15 @@ func GetUserList(page int64, page_size int64, sort string, queryData UserQueryPa
     if queryData.Type > 0 {
         qs = qs.Filter("Type", queryData.Type)
     }
+    if len(queryData.UserName) > 0 {
+        qs = qs.Filter("UserName__contains", queryData.UserName)
+    }
+    if len(queryData.Email) > 0{
+        qs = qs.Filter("Email__contains", queryData.Email)
+    }
+    if queryData.Status > 0 {
+        qs = qs.Filter("Status", queryData.Status)
+    }
 
     var offset int64
     if page <= 1 {
