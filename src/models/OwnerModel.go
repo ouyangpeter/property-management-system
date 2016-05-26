@@ -24,6 +24,7 @@ type Owner struct {
     User        *User       `orm:"rel(one);on_delete(cascade)"`
     HouseId     string      `orm:"-" form:"HouseId" valid:"Required;"`
     UserName    string      `orm:"-" form:"UserName" valid:"Required;"`
+    Password    string      `orm:"-" form:"Password"`
 }
 
 func init() {
@@ -64,13 +65,13 @@ func GetOwnerList(page int64, page_size int64, sort string, queryData OwnerQuery
     if len(queryData.Name) > 0 {
         qs = qs.Filter("Name__contains", queryData.Name)
     }
-    if len(queryData.PhoneNumber) > 0{
+    if len(queryData.PhoneNumber) > 0 {
         qs = qs.Filter("PhoneNumber__contains", queryData.PhoneNumber)
     }
-    if len(queryData.IdCard) > 0{
+    if len(queryData.IdCard) > 0 {
         qs = qs.Filter("IdCard__contains", queryData.IdCard)
     }
-    if len(queryData.Company) > 0{
+    if len(queryData.Company) > 0 {
         qs = qs.Filter("Company__contains", queryData.Company)
     }
 
@@ -200,8 +201,27 @@ func UpdateOwner(owner *Owner) (int64, error) {
     if len(owner.Remark) > 0 {
         newOwner["Remark"] = owner.Remark
     }
+
     if len(newOwner) == 0 {
-        return 0, errors.New("update field is empty")
+        //修改密码
+        if len(owner.Password) > 0 {
+            aOwner := new(Owner)
+            err := o.QueryTable(new(Owner)).Filter("Id", owner.Id).RelatedSel("User").One(aOwner)
+
+            if err != nil {
+                return 0, err;
+            }
+            log.Println(aOwner)
+            log.Println(aOwner.User)
+            user := aOwner.User
+            newUser := make(orm.Params)
+            newUser["Password"] = lib.Pwdhash(owner.Password)
+            num, err := o.QueryTable(new(User)).Filter("Id", user.Id).Update(newUser)
+            log.Println(num, err)
+            return num, err
+        } else {
+            return 0, errors.New("update field is empty")
+        }
     }
     num, err := o.QueryTable(new(Owner)).Filter("Id", owner.Id).Update(newOwner)
     return num, err

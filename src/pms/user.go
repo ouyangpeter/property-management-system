@@ -94,6 +94,9 @@ func (this *UserController)Update() {
     if err == nil && id > 0 {
         this.Rsp(true, "Success")
         return
+    } else if err == nil {
+        this.Rsp(false, "Nothing has been updated")
+        return
     } else {
         this.Rsp(false, err.Error())
         return

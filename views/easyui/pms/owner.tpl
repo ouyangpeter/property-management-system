@@ -116,7 +116,35 @@
                 }
             }]
         });
-    })
+        //创建修改密码窗口
+        $("#dialog2").dialog({
+            modal: true,
+            resizable: true,
+            top: 150,
+            closed: true,
+            buttons: [{
+                text: '保存',
+                iconCls: 'icon-save',
+                handler: function () {
+                    var selectedRow = $("#datagrid").datagrid('getSelected');
+                    var password = $('#password').val();
+                    vac.ajax(URL + '/updateOwner', {Id: selectedRow.Id, Password: password}, 'post', function (r) {
+                        if (r.status) {
+                            $("#dialog2").dialog("close");
+                        } else {
+                            vac.alert(r.info);
+                        }
+                    })
+                }
+            }, {
+                text: '取消',
+                iconCls: 'icon-cancel',
+                handler: function () {
+                    $("#dialog2").dialog("close");
+                }
+            }]
+        });
+    });
 
     function editrow() {
         if (!$("#datagrid").datagrid("getSelected")) {
@@ -150,7 +178,18 @@
         $("#dialog").dialog('open');
         $("#form1").form('clear');
     }
-
+    //编辑用户密码
+    function updateuserpassword() {
+        var dg = $("#datagrid")
+        var selectedRow = dg.datagrid('getSelected');
+        if (selectedRow == null) {
+            vac.alert("请选择用户");
+            return;
+        }
+        $("#dialog2").dialog('open');
+        $('#password').val('');
+        $("form2").form('load', {password: ''});
+    }
 
     //删除
     function delrow() {
@@ -198,7 +237,7 @@
             postData.owner_idcard = $('#query_owner_idcard').val();
         }
 
-        if ($('#query_owner_company').val() != ''){
+        if ($('#query_owner_company').val() != '') {
             postData.owner_company = $('#query_owner_company').val();
         }
 
@@ -273,6 +312,7 @@
     <a href="#" icon='icon-save' plain="true" onclick="saverow()" class="easyui-linkbutton">保存</a>
     <a href="#" icon='icon-cancel' plain="true" onclick="delrow()" class="easyui-linkbutton">删除</a>
     <a href="#" icon='icon-reload' plain="true" onclick="reloadrow()" class="easyui-linkbutton">刷新</a>
+    <a href="#" icon='icon-edit' plain="true" onclick="updateuserpassword()" class="easyui-linkbutton">修改用户密码</a>
 </div>
 <!--表格内的右键菜单-->
 <div id="mm" class="easyui-menu" style="width:120px;display: none">
@@ -280,6 +320,7 @@
     <div iconCls="icon-edit" onclick="editrow()">编辑</div>
     <div iconCls='icon-save' onclick="saverow()">保存</div>
     <div iconCls='icon-cancel' onclick="cancelrow()">取消</div>
+    <div iconCls='icon-edit' onclick="updateuserpassword()">修改密码</div>
     <div class="menu-sep"></div>
     <div iconCls='icon-cancel' onclick="delrow()">删除</div>
     <div iconCls='icon-reload' onclick="reloadrow()">刷新</div>
@@ -352,6 +393,17 @@
                 </tr>
             </table>
         </form>
+    </div>
+</div>
+<div id="dialog2" title="修改用户密码" style="width:400px;height:200px;">
+    <div style="padding:20px 20px 40px 80px;">
+        <table>
+            <tr>
+                <td>密码：</td>
+                <td><input name="Password" type="password" id="password" class="easyui-validatebox" required="true"
+                           validType="password[4,20]"/></td>
+            </tr>
+        </table>
     </div>
 </div>
 </body>
