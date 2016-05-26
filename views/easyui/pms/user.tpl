@@ -2,8 +2,8 @@
 <script type="text/javascript">
     var URL = "/pms/user";
     var statuslist = [
-        {statusid:'1',name:'禁用'},
-        {statusid:'2',name:'启用'}
+        {statusid: '1', name: '禁用'},
+        {statusid: '2', name: '启用'}
     ];
     $(function () {
         //系统用户列表
@@ -64,7 +64,7 @@
                     return;
                 }
                 changes.Id = data.Id;
-                vac.ajax(URL + '/updateOwner', changes, 'POST', function (r) {
+                vac.ajax(URL + '/updateUser', changes, 'POST', function (r) {
                     if (!r.status) {
                         vac.alert(r.info);
                     } else {
@@ -117,7 +117,7 @@
                 iconCls: 'icon-save',
                 handler: function () {
                     $("#form1").form('submit', {
-                        url: URL + '/addOwner',
+                        url: URL + '/addUser',
                         onSubmit: function () {
                             return $("#form1").form('validate');
                         },
@@ -185,7 +185,7 @@
                     vac.alert("请选择要删除的行");
                     return;
                 }
-                vac.ajax(URL + '/deleteOwner', {Id: row.Id}, 'POST', function (r) {
+                vac.ajax(URL + '/deleteUser', {Id: row.Id}, 'POST', function (r) {
                     if (r.status) {
                         $("#datagrid").datagrid('reload');
                     } else {
@@ -232,7 +232,7 @@
 </script>
 <body style="padding:2px; margin:0px;" class="panel-noscroll">
 <div class="easyui-layout layout" fit="true">
-    <div data-options="region:'north'" style="margin: 2px; height: 85px;">
+    <div data-options="region:'north'" style="margin: 2px; height: 65px;">
         <div class="panel-header">
             <div class="panel-title">查询条件</div>
             <div class="panel-tool"><a href="javascript:void(0)" class="layout-button-up"></a></div>
@@ -242,43 +242,12 @@
             <table cellpadding="3" cellspacing="3">
                 <tbody>
                 <tr>
-                    <td>楼宇名称:</td>
-                    <td><input class="easyui-combobox"
-                               id="query_building_id"
-                               style="width: 100px;"
-                               data-options="
-    valueField: 'Id',
-    textField: 'Name',
-    url: '/pms/building/buildingList',
-    onSelect: function(rec){
-    $('#query_unit_name').combobox('clear');
-    $('#query_house_no').combobox('clear');
-    var url = '/pms/building/unitList?BuildingId='+rec.Id;
-    $('#query_unit_name').combobox('reload', url);
-    }
-    "></td>
-                    <td>单元名称:</td>
-                    <td><input class="easyui-combobox" id="query_unit_name" style="width:60px;" data-options="
-                    valueField:'UnitName',textField:'UnitName',onSelect: function(rec){
-    $('#query_house_no').combobox('clear');
-    var url = '/pms/house/houseList?building_id='+rec.Building.Id+'&unit_name='+rec.UnitName;
-    $('#query_house_no').combobox('reload', url);
-    }
-                    "></td>
-                    <td>房号:</td>
-                    <td><input class="easyui-combobox" id="query_house_no" style="width: 70px;"
-                               data-options="valueField:'Id',textField:'HouseNo', method:'post'"></td>
-                </tr>
-                <tr>
-                    <td>姓名:</td>
-                    <td><input type="text" id="query_owner_name" value="" size="15"></td>
-                    <td>手机号:</td>
-                    <td><input type="text" id="query_owner_phone" value="" size="15"></td>
-                    <td>身份证:</td>
-                    <td><input type="text" id="query_owner_idcard" value="" size="20"></td>
-                    <td>工作单位:</td>
-                    <td><input type="text" id="query_owner_company" value="" size="18"></td>
-
+                    <td>用户名:</td>
+                    <td><input type="text" id="query_user_name" value="" size="20"></td>
+                    <td>邮箱:</td>
+                    <td><input type="text" id="query_email" value="" size="20"></td>
+                    <td>状态:</td>
+                    <td><input type="text" id="query_owner_idcard" value="" size="8"></td>
                     <td><input value="查询" type="button" id="BN_Find" style="width:80px; height:30px;" class="button"
                                onclick="Query();"></td>
                 </tr>
@@ -319,56 +288,32 @@
         <form id="form1" method="post">
             <table>
                 <tr>
-                    <td>楼宇：</td>
-                    <td><input class="easyui-combobox"
-                               name="BuildingId"
-                               data-options="
-    valueField: 'Id',
-    textField: 'Name',
-    url: '/pms/building/buildingList',
-    onSelect: function(rec){
-    $('#UnitName').combobox('clear');
-    $('#HouseId').combobox('clear');
-    var url = '/pms/building/unitList?BuildingId='+rec.Id;
-    $('#UnitName').combobox('reload', url);
-    }
-    " required="true"></td>
-                </tr>
-                <tr>
-                    <td>单元名称：</td>
-                    <td><select class="easyui-combobox" id="UnitName" style="width:120px;" required="true"
-                                data-options="valueField:'UnitName',textField:'UnitName',onSelect: function(rec){
-    $('#HouseId').combobox('clear');
-    var url = '/pms/house/houseList?building_id='+rec.Building.Id+'&unit_name='+rec.UnitName;
-    $('#HouseId').combobox('reload', url);
-    }">
-                    </select></td>
-                </tr>
-                <tr>
-                    <td>房号：</td>
-                    <td><select class="easyui-combobox" id="HouseId" name="HouseId" style="width:120px;"
-                                required="true" data-options="valueField:'Id',textField:'HouseNo', method:'post'">
-                    </select></td>
-                </tr>
-                <tr>
-                    <td>姓名：</td>
-                    <td><input name="Name" class="easyui-validatebox" required="true"/></td>
-                </tr>
-                <tr>
-                    <td>手机号：</td>
-                    <td><input name="PhoneNumber" class="easyui-validatebox" required="true"/></td>
-                </tr>
-                <tr>
-                    <td>身份证：</td>
-                    <td><input name="IdCard" class="easyui-validatebox" required="true"/></td>
-                </tr>
-                <tr>
-                    <td>工作单位：</td>
-                    <td><input name="Company" class="easyui-validatebox"/></td>
-                </tr>
-                <tr>
                     <td>用户名：</td>
-                    <td><input name="UserName" class="easyui-validatebox" required="true"/></td>
+                    <td><input name="Username" class="easyui-validatebox" required="true"/></td>
+                </tr>
+                <tr>
+                    <td>密码：</td>
+                    <td><input name="Password" type="password" class="easyui-validatebox" required="true"
+                               validType="password[4,20]"/></td>
+                </tr>
+                <tr>
+                    <td>重复密码：</td>
+                    <td><input name="Repassword" type="password" class="easyui-validatebox" required="true"
+                               validType="password[4,20]"/></td>
+                </tr>
+                <tr>
+                    <td>Email：</td>
+                    <td><input name="Email" class="easyui-validatebox" validType="email"/></td>
+                </tr>
+                <tr>
+                    <td>状态：</td>
+                    <td>
+                        <select name="Status" style="width:153px;" class="easyui-combobox " editable="false"
+                                required="true">
+                            <option value="2">启用</option>
+                            <option value="1">禁用</option>
+                        </select>
+                    </td>
                 </tr>
                 <tr>
                     <td>备注：</td>

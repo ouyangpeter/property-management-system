@@ -16,6 +16,7 @@ func (this *UserController)Index() {
     order := this.GetString("order")
 
     queryData := m.UserQueryParam{
+        Type:12,
 
     }
 
@@ -46,3 +47,34 @@ func (this *UserController)Index() {
 
 }
 
+func (this *UserController)Add() {
+    user := m.User{}
+    if err := this.ParseForm(&user); err != nil {
+        this.Rsp(false, err.Error())
+        return
+    }
+    //add管理员
+    user.Type = 12
+    id, err := m.AddUser(&user)
+    if id > 0 && err == nil {
+        this.Rsp(true, "Success")
+        return
+    } else {
+        this.Rsp(false, err.Error())
+        return
+    }
+
+}
+
+func (this *UserController)Delete() {
+    Id, _ := this.GetInt64("Id")
+    status, err := m.DeleteUserById(Id)
+    if status > 0 && err == nil {
+        this.Rsp(true, "Success")
+        return
+    } else {
+        this.Rsp(false, err.Error())
+        return
+    }
+
+}

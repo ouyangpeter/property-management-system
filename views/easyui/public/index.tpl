@@ -238,7 +238,7 @@
         </div>
 
         <div style="float:right; padding-right:20px; margin-top:10px;" class="head">欢迎 <span id="Lab_user"><font
-                color='#ff9933'><strong>{{.userinfo.Nickname}}</strong></font></span>&nbsp;&nbsp;|&nbsp;&nbsp;<a
+                color='#ff9933'><strong>{{.userinfo.UserName}}</strong></font></span>&nbsp;&nbsp;|&nbsp;&nbsp;<a
                 href="/public/index">返回首页</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="#" id="editpass"
                                                                          onclick="modifypassword()">修改密码</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a
                 href="#" id="loginOut">安全退出</a>
