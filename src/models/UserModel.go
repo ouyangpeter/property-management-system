@@ -27,6 +27,12 @@ type User struct {
     Owner         *Owner    `orm:"null;reverse(one);"`
 }
 
+type UserQueryParam struct {
+    Status   int
+    Email    string
+    UserName string
+}
+
 func init() {
     orm.RegisterModel(new(User))
 }
@@ -86,4 +92,20 @@ func checkUser(u *User) (err error) {
         }
     }
     return nil
+}
+
+func GetUserList(page int64, page_size int64, sort string, queryData UserQueryParam) (users []orm.Params, count int64) {
+    o := orm.NewOrm()
+    qs := o.QueryTable(new(User)).Filter("Type", 12)
+    //todo need filter
+
+    var offset int64
+    if page <= 1 {
+        offset = 0
+    } else {
+        offset = (page - 1) * page_size
+    }
+    qs.Limit(page_size, offset).OrderBy(sort).RelatedSel().Values(&users)
+    count, _ = qs.Count()
+    return users, count
 }

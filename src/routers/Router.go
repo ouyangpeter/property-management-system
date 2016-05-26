@@ -42,6 +42,9 @@ func init() {
             beego.NSRouter("/deleteOwner", &pms.OwnerController{}, "*:Delete"),
             beego.NSRouter("/updateOwner", &pms.OwnerController{}, "*:Update"),
         ),
+        beego.NSNamespace("/user",
+            beego.NSRouter("/index", &pms.UserController{}, "*:Index"),
+        ),
     )
     beego.AddNamespace(publicNs)
     beego.AddNamespace(pmsNs)

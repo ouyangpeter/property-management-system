@@ -192,8 +192,8 @@
     function Query() {
         var postData = new Object();
 
-        if ($('#query_building_id').val() != '0') {
-            postData.building_id = $('#query_building_id').val();
+        if ($('#query_building_id').combobox('getValue') != '') {
+            postData.building_id = $('#query_building_id').combobox('getValue');
         }
 
         if ($('#query_unit_name').val() != '') {
@@ -228,6 +228,7 @@
                     <td>楼宇名称:</td>
                     <td><input class="easyui-combobox"
                                name="select_building_id"
+                               id="query_building_id"
                                data-options="
     valueField: 'Id',
     textField: 'Name',

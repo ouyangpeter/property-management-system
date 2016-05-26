@@ -287,7 +287,7 @@
         <div title='用户管理'>
             <ul>
                 <li><a href="#" onclick="addTab('户主管理', '/pms/owner/index');">户主管理</a></li>
-                <li><a href="#" onclick="addTab('员工管理', '');">员工管理</a></li>
+                <li><a href="#" onclick="addTab('系统用户管理', '/pms/user/index');">系统用户管理</a></li>
             </ul>
         </div>
     </div>

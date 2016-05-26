@@ -1,10 +1,14 @@
 {{template "../public/header.tpl"}}
 <script type="text/javascript">
-    var URL = "/pms/owner";
+    var URL = "/pms/user";
+    var statuslist = [
+        {statusid:'1',name:'禁用'},
+        {statusid:'2',name:'启用'}
+    ];
     $(function () {
-        //户主列表
+        //系统用户列表
         $("#datagrid").datagrid({
-            title: '户主列表',
+            title: '系统用户列表',
             url: URL + '/index',
             method: 'POST',
             pagination: true,
@@ -19,21 +23,41 @@
             pageList: [10, 20, 30, 50, 100],
             columns: [[
                 {field: 'Id', title: 'ID', width: 30, sortable: true},
-                {field: 'Name', title: '姓名', width: 30, align: 'center', sortable: true},
-                {field: 'PhoneNumber', title: '手机号', width: 30, align: 'center', editor: 'text', sortable: true},
-                {field: 'IdCard', title: '身份证', width: 30, align: 'center', editor: 'text', sortable: true},
-                {field: 'Company', title: '工作单位', width: 30, align: 'center', editor: 'text', sortable: true},
+                {field: 'UserName', title: '用户名', width: 80, align: 'center', sortable: true},
+                {field: 'Email', title: '邮箱', width: 100, align: 'center', editor: 'text', sortable: true},
+                {field: 'Remark', title: '备注', width: 50, align: 'center', editor: 'text'},
                 {
-                    field: 'UserName', title: '用户名', width: 30, align: 'center', sortable: false,
-                    formatter: function (value, rec) {
-                        if (rec != null && rec.User != null) {
-                            return rec.User.UserName;
-                        } else {
-                            return "";
-                        }
+                    field: 'LastLoginTime', title: '上次登录时间', width: 80, align: 'center',
+                    formatter: function (value, row, index) {
+                        if (value) return phpjs.date("Y-m-d H:i:s", phpjs.strtotime(value));
+                        return value;
                     }
                 },
-                {field: 'Remark', title: '备注', width: 50, align: 'center', editor: 'text'}
+                {
+                    field: 'Created', title: '添加时间', width: 80, align: 'center',
+                    formatter: function (value, row, index) {
+                        if (value) return phpjs.date("Y-m-d H:i:s", phpjs.strtotime(value));
+                        return value;
+                    }
+                },
+                {
+                    field: 'Status', title: '状态', width: 40, align: 'center',
+                    formatter: function (value) {
+                        for (var i = 0; i < statuslist.length; i++) {
+                            if (statuslist[i].statusid == value) return statuslist[i].name;
+                        }
+                        return value;
+                    },
+                    editor: {
+                        type: 'combobox',
+                        options: {
+                            valueField: 'statusid',
+                            textField: 'name',
+                            data: statuslist,
+                            required: true
+                        }
+                    }
+                }
             ]],
             onAfterEdit: function (index, data, changes) {
                 if (vac.isEmpty(changes)) {
@@ -82,7 +106,7 @@
                 else $(this).closest('div.datagrid-wrap').find('div.datagrid-pager').show();
             }
         });
-        //创建添加户主窗口
+        //创建添加系统用户窗口
         $("#dialog").dialog({
             modal: true,
             resizable: true,
@@ -145,7 +169,7 @@
         $("#datagrid").datagrid("reload");
     }
 
-    //添加户主弹窗
+    //添加系统用户弹窗
     function addrow() {
         $("#dialog").dialog('open');
         $("#form1").form('clear');
@@ -198,7 +222,7 @@
             postData.owner_idcard = $('#query_owner_idcard').val();
         }
 
-        if ($('#query_owner_company').val() != ''){
+        if ($('#query_owner_company').val() != '') {
             postData.owner_company = $('#query_owner_company').val();
         }
 
@@ -290,7 +314,7 @@
 <div id="mm1" class="easyui-menu" style="width:120px;display: none">
     <div icon='icon-add' onclick="addrow()">新增</div>
 </div>
-<div id="dialog" title="添加户主" style="width:400px;height:400px;">
+<div id="dialog" title="添加系统用户" style="width:400px;height:400px;">
     <div style="padding:20px 20px 40px 80px;">
         <form id="form1" method="post">
             <table>

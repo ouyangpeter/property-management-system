@@ -53,8 +53,6 @@ func (this *HouseController)Index() {
         this.ServeJSON()
         return
     } else {
-        buildings, _ := m.GetAllBuilding()
-        this.Data["buildings"] = &buildings
         this.Data["houses"] = &houses
         if this.GetTemplateType() != "easyui" {
             this.Layout = this.GetTemplateType() + "/public/layout.tpl"
