@@ -250,7 +250,7 @@
 </div>
 
 <div region="west" split="true" iconCls="icon-news" title="主菜单" style="width:150px;padding:0px;">
-    <div id="d_accordionmenu" class="easyui-accordion" fit="true">
+    <div id="d_accordionmenu" class="easyui-accordion">
         <div title='小区管理'>
             <ul>
                 <li><a href="#" onclick="addTab('小区信息', '');">小区信息</a></li>
