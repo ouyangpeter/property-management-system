@@ -109,3 +109,15 @@ func (this *ParkingSpotController)Update() {
         return
     }
 }
+
+func (this *ParkingSpotController)RepealOwner() {
+    Id, _ := this.GetInt64("Id")
+    status, err := m.RepealOwnerFromParkingSpot(Id)
+    if status > 0 && err == nil {
+        this.Rsp(true, "Success")
+        return
+    } else {
+        this.Rsp(false, err.Error())
+        return
+    }
+}

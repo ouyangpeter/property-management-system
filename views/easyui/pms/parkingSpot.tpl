@@ -127,8 +127,42 @@
                 }
             }]
         });
+        //创建登记户主窗口
+        $("#dialog_regist_owner").dialog({
+            modal: true,
+            resizable: true,
+            top: 150,
+            closed: true,
+            buttons: [{
+                text: '保存',
+                iconCls: 'icon-save',
+                handler: function () {
+                    $("#form_regist_owner").form('submit', {
+                        url: URL + '/updateParkingSpot',
+                        onSubmit: function () {
+                            return $("#form_regist_owner").form('validate');
+                        },
+                        success: function (r) {
+                            var r = $.parseJSON(r);
+                            if (r.status) {
+                                $("#dialog_regist_owner").dialog("close");
+                                $("#datagrid").datagrid('reload');
+                            } else {
+                                vac.alert(r.info);
+                            }
+                        }
+                    });
+                }
+            }, {
+                text: '取消',
+                iconCls: 'icon-cancel',
+                handler: function () {
+                    $("#dialog_regist_owner").dialog("close");
+                }
+            }]
+        });
 
-    })
+    });
 
 
     function editrow() {
@@ -185,6 +219,44 @@
         });
     }
 
+    //登记户主
+    function registOwner() {
+        var row = $("#datagrid").datagrid("getSelected");
+        if (!row) {
+            vac.alert("请选择要登记的车位");
+            return;
+        }
+//        console.log(row["Id"]);
+
+        $("#dialog_regist_owner").dialog('open');
+        $("#form_regist_owner").form('clear');
+        $("#parkingSpotId").val(row["Id"]);
+    }
+    //撤销户主
+    function repealOwner() {
+        var row = $("#datagrid").datagrid("getSelected");
+        if (!row) {
+            vac.alert("请选择要撤销的车位");
+            return;
+        }
+        console.log(row);
+        if (row["Owner"] == null) {
+            vac.alert("该车位已空")
+            return;
+        }
+        $.post(URL + "/repealOwner", {
+                    "Id": row.Id
+                },
+                function (r) {
+                    if (r.status) {
+                        $("#datagrid").datagrid('reload');
+                    } else {
+                        vac.alert(r.info);
+                    }
+                }
+        )
+        ;
+    }
     function Query() {
         var postData = new Object();
 
@@ -265,6 +337,8 @@
     <a href="#" icon='icon-save' plain="true" onclick="saverow()" class="easyui-linkbutton">保存</a>
     <a href="#" icon='icon-cancel' plain="true" onclick="delrow()" class="easyui-linkbutton">删除</a>
     <a href="#" icon='icon-reload' plain="true" onclick="reloadrow()" class="easyui-linkbutton">刷新</a>
+    <a href="#" icon='icon-add' plain="true" onclick="registOwner()" class="easyui-linkbutton">车位登记户主</a>
+    <a href="#" icon='icon-remove' plain="true" onclick="repealOwner()" class="easyui-linkbutton">车位撤销户主</a>
 </div>
 <!--表格内的右键菜单-->
 <div id="mm" class="easyui-menu" style="width:120px;display: none">
@@ -296,7 +370,6 @@
     textField: 'Name',
     url: '/pms/parkingLot/parkingLotList'
     "></td>
-                    </td>
                 </tr>
                 <tr>
                     <td>车位号：</td>
@@ -305,6 +378,35 @@
                 <tr>
                     <td>备注：</td>
                     <td><textarea name="Remark" class="easyui-validatebox" validType="length[0,200]"></textarea></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
+<div id="dialog_regist_owner" title="车位登记户主" style="width:400px;height:400px;">
+    <div style="padding:20px 20px 40px 80px;">
+        <form id="form_regist_owner" method="post">
+            <input id="parkingSpotId" name="Id" type="hidden">
+            <table>
+                <tr>
+                    <td>户主姓名：</td>
+                    <td><input name="OwnerName" class="easyui-validatebox" required="true"/></td>
+                </tr>
+                <tr>
+                    <td>户主手机号：</td>
+                    <td><input name="OwnerPhone" class="easyui-validatebox" required="true"/></td>
+                </tr>
+                <tr>
+                    <td>车牌号：</td>
+                    <td><input name="CarLicencePlate" class="easyui-validatebox" required="true"/></td>
+                </tr>
+                <tr>
+                    <td>车颜色：</td>
+                    <td><input name="CarColor" class="easyui-validatebox" required="true"/></td>
+                </tr>
+                <tr>
+                    <td>车名：</td>
+                    <td><input name="CarName" class="easyui-validatebox" required="true"/></td>
                 </tr>
             </table>
         </form>

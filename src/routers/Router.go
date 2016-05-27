@@ -60,6 +60,7 @@ func init() {
             beego.NSRouter("/addParkingSpot", &pms.ParkingSpotController{}, "*:Add"),
             beego.NSRouter("/deleteParkingSpot", &pms.ParkingSpotController{}, "*:Delete"),
             beego.NSRouter("/updateParkingSpot", &pms.ParkingSpotController{}, "*:Update"),
+            beego.NSRouter("/repealOwner", &pms.ParkingSpotController{}, "*:RepealOwner"),
         ),
     )
     beego.AddNamespace(publicNs)

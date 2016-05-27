@@ -19,7 +19,9 @@ type ParkingSpot struct {
     CarColor        string        `orm:"size(32)" form:"CarColor" valid:"MaxSize(15);MinSize(1)"`
     Owner           *Owner        `orm:"null; rel(fk); on_delete(set_null)"`
     ParkingLot      *ParkingLot   `orm:"not null; rel(fk); on_delete(cascade)"`
-    ParkingLotId    int64         `orm:"-" form:"ParkingLotId" valid:"Required;"`
+    ParkingLotId    int64         `orm:"-" form:"ParkingLotId"`
+    OwnerName       string        `orm:"-" form:"OwnerName"`
+    OwnerPhone      string        `orm:"-" form:"OwnerPhone"`
 }
 
 type ParkingSpotQueryParam struct {
@@ -118,6 +120,7 @@ func UpdateParkingSpot(parkingSpot *ParkingSpot) (int64, error) {
     }
 
     o := orm.NewOrm()
+    terr := o.Begin()
     newParkingSpot := make(orm.Params)
     if len(parkingSpot.ParkingSpotNo) > 0 {
         newParkingSpot["ParkingSpotNo"] = parkingSpot.ParkingSpotNo
@@ -139,11 +142,51 @@ func UpdateParkingSpot(parkingSpot *ParkingSpot) (int64, error) {
         newParkingSpot["Remark"] = parkingSpot.Remark
     }
 
+    if len(parkingSpot.OwnerName) > 0 && len(parkingSpot.OwnerPhone) > 0 {
+        var owner Owner
+        err := o.QueryTable(new(Owner)).Filter("Name", parkingSpot.OwnerName).Filter("PhoneNumber", parkingSpot.OwnerPhone).One(&owner)
+        if err != nil {
+            return 0, err
+        }
+        var tParkingSpot ParkingSpot
+        err = o.QueryTable(new(ParkingSpot)).Filter("Id", parkingSpot.Id).One(&tParkingSpot)
+        if err != nil {
+            return 0, err
+        }
+
+        tParkingSpot.Owner = &owner
+        if _, err := o.Update(&tParkingSpot); err != nil {
+            terr = o.Rollback()
+            return 0, err
+        }
+    }
+
     if len(newParkingSpot) == 0 {
         return 0, errors.New("update field is empty")
     }
 
     num, err := o.QueryTable(new(ParkingSpot)).Filter("Id", parkingSpot.Id).Update(newParkingSpot)
-    return num, err
+    if err != nil {
+        terr = o.Rollback()
+        return 0, err
+    }else{
+        terr = o.Commit()
+    }
+    return num, terr
 }
 
+func RepealOwnerFromParkingSpot(Id int64) (int64 ,error){
+    o := orm.NewOrm()
+    var parkingSpot ParkingSpot
+    err := o.QueryTable(new(ParkingSpot)).Filter("Id", Id).One(&parkingSpot)
+    if err != nil {
+        return 0, err
+    }
+    parkingSpot.CarColor = "";
+    parkingSpot.CarName = "";
+    parkingSpot.CarLicencePlate = "";
+    parkingSpot.Owner = nil;
+    num, err := o.Update(&parkingSpot)
+    return num, err
+
+}
