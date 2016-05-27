@@ -92,3 +92,10 @@ func (this *ParkingLotController) Update() {
         return
     }
 }
+
+func (this *ParkingLotController) GetAllParkingLotList() {
+    parkingLots, _ := m.GetParkingLotList(1, 5000, "Id", m.ParkingLotQueryParam{})
+    this.Data["json"] = parkingLots
+    this.ServeJSON()
+    return
+}

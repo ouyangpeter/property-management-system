@@ -273,7 +273,7 @@
                 <li><a href="#" onclick="addTab('停车场管理', '/pms/parkingLot/index')">停车场管理</a></li>
             </ul>
             <ul>
-                <li><a href="#" onclick="addTab('车位管理', '')">车位管理</a></li>
+                <li><a href="#" onclick="addTab('车位管理', '/pms/parkingSpot/index')">车位管理</a></li>
             </ul>
         </div>
         <div title='收费管理'>

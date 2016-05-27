@@ -53,6 +53,13 @@ func init() {
             beego.NSRouter("/addParkingLot", &pms.ParkingLotController{}, "*:Add"),
             beego.NSRouter("/deleteParkingLot", &pms.ParkingLotController{}, "*:Delete"),
             beego.NSRouter("/updateParkingLot", &pms.ParkingLotController{}, "*:Update"),
+            beego.NSRouter("/parkingLotList", &pms.ParkingLotController{}, "*:GetAllParkingLotList"),
+        ),
+        beego.NSNamespace("/parkingSpot",
+            beego.NSRouter("/index", &pms.ParkingSpotController{}, "*:Index"),
+            beego.NSRouter("/addParkingSpot", &pms.ParkingSpotController{}, "*:Add"),
+            beego.NSRouter("/deleteParkingSpot", &pms.ParkingSpotController{}, "*:Delete"),
+            beego.NSRouter("/updateParkingSpot", &pms.ParkingSpotController{}, "*:Update"),
         ),
     )
     beego.AddNamespace(publicNs)

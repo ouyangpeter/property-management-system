@@ -25,6 +25,7 @@ type Owner struct {
     HouseId     string      `orm:"-" form:"HouseId" valid:"Required;"`
     UserName    string      `orm:"-" form:"UserName" valid:"Required;"`
     Password    string      `orm:"-" form:"Password"`
+    ParkingSpots   []*ParkingSpot   `orm:"reverse(many)"`
 }
 
 func init() {

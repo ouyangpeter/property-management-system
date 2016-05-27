@@ -40,6 +40,7 @@ func (this *HouseController)Index() {
         if house.Owner != nil {
             house.Owner.User = nil
             house.Owner.Houses = nil
+            house.Owner.ParkingSpots = nil
         }
         house.Building.Houses = nil
     }

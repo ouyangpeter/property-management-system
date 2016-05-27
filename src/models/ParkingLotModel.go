@@ -16,6 +16,7 @@ type ParkingLot struct {
     Area           int           `form:"Area" valid:"Required"`
     ParkingSpotNum int           `form:"ParkingSpotNum" valid:"Required"`
     Remark         string        `orm:"null;size(200)" form:"Remark" valid:"MaxSize(200)"`
+    ParkingSpots   []*ParkingSpot   `orm:"reverse(many)"`
 }
 
 func init() {
