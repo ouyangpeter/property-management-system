@@ -15,6 +15,7 @@ type ChargeType struct {
     Remark    string        `orm:"null;size(200)" form:"Remark" valid:"MaxSize(200)"`
     Name      string        `orm:"unique;size(32)" form:"Name" valid:"Required;MaxSize(20);MinSize(1)"`
     Criterion string        `orm:"size(32)" form:"Criterion" valid:"Required;"`
+    Charges   []*Charge     `orm:"reverse(many)"`
 }
 
 type ChargeTypeQueryParam struct {

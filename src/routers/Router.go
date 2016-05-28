@@ -69,6 +69,13 @@ func init() {
             beego.NSRouter("/updateChargeType", &pms.ChargeTypeController{}, "*:Update"),
             beego.NSRouter("/chargeTypeList", &pms.ChargeTypeController{}, "*:GetAllChargeTypeList"),
         ),
+
+        beego.NSNamespace("/charge",
+            beego.NSRouter("/index", &pms.ChargeController{}, "*:Index"),
+            beego.NSRouter("/addCharge", &pms.ChargeController{}, "*:Add"),
+            beego.NSRouter("/deleteCharge", &pms.ChargeController{}, "*:Delete"),
+            beego.NSRouter("/updateCharge", &pms.ChargeController{}, "*:Update"),
+        ),
     )
     beego.AddNamespace(publicNs)
     beego.AddNamespace(pmsNs)

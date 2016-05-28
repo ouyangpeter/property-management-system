@@ -124,6 +124,8 @@ func (this *HouseController)GetHouseList() {
         if house.Owner != nil {
             house.Owner.User = nil
             house.Owner.Houses = nil
+            house.Owner.Charges = nil
+            house.Owner.ParkingSpots = nil
         }
         house.Building.Houses = nil
     }

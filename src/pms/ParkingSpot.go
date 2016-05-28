@@ -44,6 +44,7 @@ func (this *ParkingSpotController)Index() {
             parkingSpot.Owner.User = nil
             parkingSpot.Owner.Houses = nil
             parkingSpot.Owner.ParkingSpots = nil
+            parkingSpot.Owner.Charges = nil
         }
         parkingSpot.ParkingLot.ParkingSpots = nil
     }

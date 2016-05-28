@@ -1,10 +1,14 @@
 {{template "../public/header.tpl"}}
 <script type="text/javascript">
-    var URL = "/pms/parkingSpot";
+    var URL = "/pms/charge";
+    var statuslist = [
+        {statusid: '1', name: '已结款'},
+        {statusid: '2', name: '未结款'}
+    ];
     $(function () {
-        //车位列表
+        //收费列表
         $("#datagrid").datagrid({
-            title: '车位列表',
+            title: '收费列表',
             url: URL + '/index',
             method: 'POST',
             pagination: true,
@@ -20,16 +24,15 @@
             columns: [[
                 {field: 'Id', title: 'ID', width: 30, sortable: true},
                 {
-                    field: 'ParkingLotName', title: '停车场名称', width: 40,
+                    field: 'ChargeTypeName', title: '收费名称', width: 40,
                     formatter: function (value, rec) {
-                        if (rec != null && rec.ParkingLot != null) {
-                            return rec.ParkingLot.Name;
+                        if (rec != null && rec.ChargeType != null) {
+                            return rec.ChargeType.Name;
                         } else {
                             return "";
                         }
                     }
                 },
-                {field: 'ParkingSpotNo', title: '车位号', width: 30, align: 'center', editor: 'text', sortable: true},
                 {
                     field: 'OnwerName', title: '户主', width: 30, align: 'center',
                     formatter: function (value, rec) {
@@ -41,17 +44,48 @@
                     }
                 },
 
-                {field: 'CarLicencePlate', title: '车牌号', width: 30, align: 'center', sortable: true},
-                {field: 'CarColor', title: '车颜色', width: 30, align: 'center', sortable: true},
-                {field: 'CarName', title: '车名', width: 30, align: 'center', sortable: true},
-                {field: 'Remark', title: '备注', width: 50, align: 'center', editor: 'text'}
+                {field: 'Money', title: '金额', width: 30, align: 'center', sortable: true, editor: 'numberbox'},
+                {
+                    field: 'Created', title: '添加时间', width: 80, align: 'center',
+                    formatter: function (value, row, index) {
+                        if (value) return phpjs.date("Y-m-d H:i:s", phpjs.strtotime(value));
+                        return value;
+                    }
+                },
+                {
+                    field: 'CheckOutDate', title: '结款日期', width: 80, align: 'center',
+                    formatter: function (value, row, index) {
+                        if (value == "0001-01-01T00:00:00Z") return "";
+                        if (value) return phpjs.date("Y-m-d", phpjs.strtotime(value));
+                        return value;
+                    }
+                },
+                {field: 'Remark', title: '备注', width: 50, align: 'center', editor: 'text'},
+                {
+                    field: 'Status', title: '状态', width: 40, align: 'center',
+                    formatter: function (value) {
+                        for (var i = 0; i < statuslist.length; i++) {
+                            if (statuslist[i].statusid == value) return statuslist[i].name;
+                        }
+                        return value;
+                    },
+                    editor: {
+                        type: 'combobox',
+                        options: {
+                            valueField: 'statusid',
+                            textField: 'name',
+                            data: statuslist,
+                            required: true
+                        }
+                    }
+                }
             ]],
             onAfterEdit: function (index, data, changes) {
                 if (vac.isEmpty(changes)) {
                     return;
                 }
                 changes.Id = data.Id;
-                vac.ajax(URL + '/updateParkingSpot', changes, 'POST', function (r) {
+                vac.ajax(URL + '/updateCharge', changes, 'POST', function (r) {
                     if (!r.status) {
                         vac.alert(r.info);
                     } else {
@@ -93,7 +127,7 @@
                 else $(this).closest('div.datagrid-wrap').find('div.datagrid-pager').show();
             }
         });
-        //创建添加车位窗口
+        //创建添加收费窗口
         $("#dialog").dialog({
             modal: true,
             resizable: true,
@@ -104,7 +138,7 @@
                 iconCls: 'icon-save',
                 handler: function () {
                     $("#form1").form('submit', {
-                        url: URL + '/addParkingSpot',
+                        url: URL + '/addCharge',
                         onSubmit: function () {
                             return $("#form1").form('validate');
                         },
@@ -127,40 +161,6 @@
                 }
             }]
         });
-        //创建登记户主窗口
-        $("#dialog_regist_owner").dialog({
-            modal: true,
-            resizable: true,
-            top: 150,
-            closed: true,
-            buttons: [{
-                text: '保存',
-                iconCls: 'icon-save',
-                handler: function () {
-                    $("#form_regist_owner").form('submit', {
-                        url: URL + '/updateParkingSpot',
-                        onSubmit: function () {
-                            return $("#form_regist_owner").form('validate');
-                        },
-                        success: function (r) {
-                            var r = $.parseJSON(r);
-                            if (r.status) {
-                                $("#dialog_regist_owner").dialog("close");
-                                $("#datagrid").datagrid('reload');
-                            } else {
-                                vac.alert(r.info);
-                            }
-                        }
-                    });
-                }
-            }, {
-                text: '取消',
-                iconCls: 'icon-cancel',
-                handler: function () {
-                    $("#dialog_regist_owner").dialog("close");
-                }
-            }]
-        });
         //创建选择户主窗口
         $("#dialog_choose_owner").dialog({
             modal: true,
@@ -174,6 +174,7 @@
                     if ($("#input_owner_name2").val() != "" && $("#input_owner_phone2").val() != "") {
                         $("#input_owner_phone").val($("#input_owner_phone2").val());
                         $("#input_owner_name").val($("#input_owner_name2").val());
+                        $("#input_owner_id").val($("#input_owner_id2").val());
                         $("#dialog_choose_owner").dialog("close");
                     } else {
                         vac.alert("未选择户主");
@@ -234,7 +235,7 @@
                     vac.alert("请选择要删除的行");
                     return;
                 }
-                vac.ajax(URL + '/deleteParkingSpot', {Id: row.Id}, 'POST', function (r) {
+                vac.ajax(URL + '/deleteCharge', {Id: row.Id}, 'POST', function (r) {
                     if (r.status) {
                         $("#datagrid").datagrid('reload');
                     } else {
@@ -245,45 +246,6 @@
         });
     }
 
-    //登记户主
-    function registOwner() {
-        var row = $("#datagrid").datagrid("getSelected");
-        if (!row) {
-            vac.alert("请选择要登记的车位");
-            return;
-        }
-//        console.log(row["Id"]);
-
-        $("#dialog_regist_owner").dialog('open');
-        $("#form_regist_owner").form('clear');
-        $("#parkingSpotId").val(row["Id"]);
-    }
-    //撤销户主
-    function repealOwner() {
-        var row = $("#datagrid").datagrid("getSelected");
-        if (!row) {
-            vac.alert("请选择要撤销的车位");
-            return;
-        }
-        console.log(row);
-        if (row["Owner"] == null) {
-            vac.alert("该车位已空")
-            return;
-        }
-        $.post(URL + "/repealOwner", {
-                    "Id": row.Id
-                },
-                function (r) {
-                    if (r.status) {
-                        $("#datagrid").datagrid('reload');
-                    } else {
-                        vac.alert(r.info);
-                    }
-                }
-        )
-        ;
-    }
-
     function chooseOwner() {
         $("#dialog_choose_owner").dialog('open');
         $("#form_choose_owner").form('clear');
@@ -291,28 +253,19 @@
     function Query() {
         var postData = new Object();
 
-        if ($('#query_parking_lot_id').combobox('getValue') != '') {
-            postData.parking_lot_id = $('#query_parking_lot_id').combobox('getValue');
+        if ($('#query_charge_type_id').combobox('getValue') != '') {
+            postData.charge_type_id = $('#query_charge_type_id').combobox('getValue');
         }
 
-        if ($('#query_parking_spot_no').val() != '') {
-            postData.parking_spot_no = $('#query_parking_spot_no').val();
-        }
 
         if ($('#query_owner_name').val() != '') {
             postData.owner_name = $('#query_owner_name').val();
         }
-        if ($('#query_car_licence_plate').val() != '') {
-            postData.car_licence_plate = $('#query_car_licence_plate').val();
+
+        if ($('#query_status').val() != '') {
+            postData.status = $('#query_status').val();
         }
 
-        if ($('#query_car_color').val() != '') {
-            postData.car_color = $('#query_car_color').val();
-        }
-
-        if ($('#query_car_name').val() != '') {
-            postData.car_name = $('#query_car_name').val();
-        }
         $('#datagrid').datagrid('load', postData);
     }
 </script>
@@ -328,28 +281,22 @@
             <table cellpadding="3" cellspacing="3">
                 <tbody>
                 <tr>
-                    <td>停车场名称:</td>
+                    <td>收费名称:</td>
                     <td><input class="easyui-combobox"
-                               id="query_parking_lot_id"
+                               id="query_charge_type_id"
                                data-options="
     valueField: 'Id',
     textField: 'Name',
-    url: '/pms/parkingLot/parkingLotList'
+    url: '/pms/chargeType/chargeTypeList'
     "></td>
-                    <td>车位号:</td>
-                    <td><input type="text" id="query_parking_spot_no" value="" size="10"></td>
+                    <td>状态</td>
+                    <td><select id="query_status">
+                        <option></option>
+                        <option value="1">已结款</option>
+                        <option value="2">未结款</option>
+                    </select></td>
                     <td>户主:</td>
                     <td><input type="text" id="query_owner_name" value="" size="10"></td>
-                </tr>
-                <tr>
-                    <td>车牌号:</td>
-                    <td><input type="text" id="query_car_licence_plate" value="" size="20"></td>
-                    <td>车颜色:</td>
-                    <td><input type="text" id="query_car_color" value="" size="10"></td>
-                    <td>车名:</td>
-                    <td><input type="text" id="query_car_name" value="" size="10"
-                               onkeydown="if(event.keyCode == 13) {Query();}"></td>
-
                     <td><input value="查询" type="button" id="BN_Find" style="width:80px; height:30px;" class="button"
                                onclick="Query();"></td>
                 </tr>
@@ -368,8 +315,6 @@
     <a href="#" icon='icon-save' plain="true" onclick="saverow()" class="easyui-linkbutton">保存</a>
     <a href="#" icon='icon-cancel' plain="true" onclick="delrow()" class="easyui-linkbutton">删除</a>
     <a href="#" icon='icon-reload' plain="true" onclick="reloadrow()" class="easyui-linkbutton">刷新</a>
-    <a href="#" icon='icon-add' plain="true" onclick="registOwner()" class="easyui-linkbutton">车位登记户主</a>
-    <a href="#" icon='icon-remove' plain="true" onclick="repealOwner()" class="easyui-linkbutton">车位撤销户主</a>
 </div>
 <!--表格内的右键菜单-->
 <div id="mm" class="easyui-menu" style="width:120px;display: none">
@@ -387,38 +332,23 @@
 <div id="mm1" class="easyui-menu" style="width:120px;display: none">
     <div icon='icon-add' onclick="addrow()">新增</div>
 </div>
-<div id="dialog" title="添加车位" style="width:400px;height:400px;">
+<div id="dialog" title="添加收费" style="width:450px;height:400px;">
     <div style="padding:20px 20px 40px 80px;">
         <form id="form1" method="post">
+            <input id="input_owner_id" name="OwnerId" type="hidden"/>
             <table>
                 <tr>
-                    <td>停车场：</td>
+                    <td>收费名称：</td>
                     <td>
                         <input class="easyui-combobox"
-                               name="ParkingLotId"
-                               id="ParkingLotId" data-options="
+                               name="ChargeTypeId"
+                               required="true"
+                               data-options="
     valueField: 'Id',
     textField: 'Name',
-    url: '/pms/parkingLot/parkingLotList'
+    url: '/pms/chargeType/chargeTypeList'
     "></td>
                 </tr>
-                <tr>
-                    <td>车位号：</td>
-                    <td><input name="ParkingSpotNo" class="easyui-validatebox" required="true"/></td>
-                </tr>
-                <tr>
-                    <td>备注：</td>
-                    <td><textarea name="Remark" class="easyui-validatebox" validType="length[0,200]"></textarea></td>
-                </tr>
-            </table>
-        </form>
-    </div>
-</div>
-<div id="dialog_regist_owner" title="车位登记户主" style="width:450px;height:400px;">
-    <div style="padding:20px 20px 40px 80px;">
-        <form id="form_regist_owner" method="post">
-            <input id="parkingSpotId" name="Id" type="hidden">
-            <table>
                 <tr>
                     <td>户主姓名：</td>
                     <td><input id="input_owner_name" name="OwnerName" class="easyui-validatebox" required="true"/></td>
@@ -433,16 +363,12 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>车牌号：</td>
-                    <td><input name="CarLicencePlate" class="easyui-validatebox" required="true"/></td>
+                    <td>金额：</td>
+                    <td><input name="Money" class="easyui-validatebox" required="true"/></td>
                 </tr>
                 <tr>
-                    <td>车颜色：</td>
-                    <td><input name="CarColor" class="easyui-validatebox" required="true"/></td>
-                </tr>
-                <tr>
-                    <td>车名：</td>
-                    <td><input name="CarName" class="easyui-validatebox" required="true"/></td>
+                    <td>备注：</td>
+                    <td><textarea name="Remark" class="easyui-validatebox" validType="length[0,200]"></textarea></td>
                 </tr>
             </table>
         </form>
@@ -451,6 +377,7 @@
 <div id="dialog_choose_owner" title="户主选择" style="width:400px;height:400px;">
     <div style="padding:20px 20px 40px 80px;">
         <form id="form_choose_owner" method="post">
+            <input id="input_owner_id2" type="hidden"/>
             <table>
                 <tr>
                     <td>楼宇名称:</td>
@@ -485,6 +412,7 @@
                                data-options="valueField:'Id',textField:'HouseNo', method:'post',onSelect: function(rec){
                                $('#input_owner_name2').val(rec.Owner.Name);
                                $('#input_owner_phone2').val(rec.Owner.PhoneNumber);
+                               $('#input_owner_id2').val(rec.Owner.Id);
     }"></td>
                 </tr>
                 <tr>

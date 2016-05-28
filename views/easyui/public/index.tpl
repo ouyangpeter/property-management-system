@@ -281,7 +281,7 @@
                 <li><a href="#" onclick="addTab('收费类型管理', '/pms/chargeType/index')">收费类型管理</a></li>
             </ul>
             <ul>
-                <li><a href="#" onclick="addTab('户主收费管理', '')">户主收费管理</a></li>
+                <li><a href="#" onclick="addTab('户主收费管理', '/pms/charge/index')">户主收费管理</a></li>
             </ul>
         </div>
         <div title='用户管理'>

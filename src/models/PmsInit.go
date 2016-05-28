@@ -148,6 +148,37 @@ func insertTestData() {
     } else {
         fmt.Println("insert test parkintSpot end")
     }
+
+    for i := 0; i < 100; i++ {
+        insertChargeType("测试收费类型" + strconv.Itoa(i))
+    }
+
+    chargeType := new(ChargeType)
+    chargeType.Name = "网费"
+    chargeType.Criterion = "宽带包年"
+    chargeType.Remark = "这是一个备注"
+    _, err = o.Insert(chargeType)
+    if err != nil {
+        fmt.Println(err.Error())
+        os.Exit(-1)
+    } else {
+        fmt.Println("insert test chargeType end")
+    }
+
+    charge := new(Charge)
+    charge.Owner = owner
+    charge.ChargeType = chargeType
+    charge.Money = 300
+    charge.Status = 2
+    charge.Remark = "测试一下备注"
+    _, err = o.Insert(charge)
+    if err != nil {
+        fmt.Println(err.Error())
+        os.Exit(-1)
+    } else {
+        fmt.Println("insert test charge end")
+    }
+
 }
 
 //数据库连接
@@ -288,3 +319,22 @@ func insertParkingLot(name string) {
         fmt.Println("insert", n, "parkingLot end")
     }
 }
+
+func insertChargeType(name string) {
+    fmt.Println("insert chargeType:", name)
+    chargeType := new(ChargeType)
+
+    chargeType.Name = name
+    chargeType.Criterion = name + "的测试标准"
+    chargeType.Remark = name + "的备注"
+    o = orm.NewOrm()
+    n, err := o.Insert(chargeType)
+
+    if err != nil {
+        fmt.Println(err.Error())
+        os.Exit(-1)
+    } else {
+        fmt.Println("insert", n, "chargeType end")
+    }
+}
+

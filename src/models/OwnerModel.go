@@ -12,20 +12,21 @@ import (
 var password0 = "000000"
 
 type Owner struct {
-    Id          int64
-    Created     time.Time   `orm:"type(datetime);auto_now_add" form:"-"`
-    Modified    time.Time   `orm:"type(datetime);auto_now;null" form:"-"`
-    Remark      string      `orm:"null;size(200)" form:"Remark" valid:"MaxSize(200)"`
-    Name        string      `orm:"size(32)" form:"Name"`
-    PhoneNumber string      `orm:"size(32)" form:"PhoneNumber" valid:"Mobile"`
-    IdCard      string      `orm:"size(32)" form:"IdCard" valid:"Length(18)"`
-    Company     string      `orm:"size(32)" form:"Company"`
-    Houses      []*House    `orm:"reverse(many)"`
-    User        *User       `orm:"rel(one);on_delete(cascade)"`
-    HouseId     string      `orm:"-" form:"HouseId" valid:"Required;"`
-    UserName    string      `orm:"-" form:"UserName" valid:"Required;"`
-    Password    string      `orm:"-" form:"Password"`
-    ParkingSpots   []*ParkingSpot   `orm:"reverse(many)"`
+    Id           int64
+    Created      time.Time   `orm:"type(datetime);auto_now_add" form:"-"`
+    Modified     time.Time   `orm:"type(datetime);auto_now;null" form:"-"`
+    Remark       string      `orm:"null;size(200)" form:"Remark" valid:"MaxSize(200)"`
+    Name         string      `orm:"size(32)" form:"Name"`
+    PhoneNumber  string      `orm:"size(32)" form:"PhoneNumber" valid:"Mobile"`
+    IdCard       string      `orm:"size(32)" form:"IdCard" valid:"Length(18)"`
+    Company      string      `orm:"size(32)" form:"Company"`
+    Houses       []*House    `orm:"reverse(many)"`
+    User         *User       `orm:"rel(one);on_delete(cascade)"`
+    HouseId      string      `orm:"-" form:"HouseId" valid:"Required;"`
+    UserName     string      `orm:"-" form:"UserName" valid:"Required;"`
+    Password     string      `orm:"-" form:"Password"`
+    ParkingSpots []*ParkingSpot   `orm:"reverse(many)"`
+    Charges      []*Charge    `orm:"reverse(many)"`
 }
 
 func init() {
