@@ -278,10 +278,10 @@
         </div>
         <div title='收费管理'>
             <ul>
-                <li><a href="#" onclick="addTab('收费项目', '')">收费项目</a></li>
+                <li><a href="#" onclick="addTab('收费类型管理', '/pms/chargeType/index')">收费类型管理</a></li>
             </ul>
             <ul>
-                <li><a href="#" onclick="addTab('收费信息', '')">收费信息</a></li>
+                <li><a href="#" onclick="addTab('户主收费管理', '')">户主收费管理</a></li>
             </ul>
         </div>
         <div title='用户管理'>

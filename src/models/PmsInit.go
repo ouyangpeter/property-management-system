@@ -64,7 +64,7 @@ func insertTestData() {
     user.UserName = "sep"
     user.Password = Pwdhash("123456")
     user.Nickname = "sep"
-    user.Email  = "123@123.com"
+    user.Email = "test@test.com"
     user.Type = 11
     user.Status = 2
     _, err := o.Insert(user)
@@ -117,7 +117,37 @@ func insertTestData() {
     } else {
         fmt.Println("inset test house end")
     }
+    for i := 0; i < 100; i++ {
+        insertParkingLot("测试停车场" + strconv.Itoa(i))
+    }
 
+    parkingLot := new(ParkingLot)
+    parkingLot.Name = "如意客栈"
+    parkingLot.ParkingSpotNum = 49
+    parkingLot.Area = 700
+    parkingLot.Remark = "如意客栈的备注"
+    _, err = o.Insert(parkingLot)
+    if err != nil {
+        fmt.Println(err.Error())
+        os.Exit(-1)
+    } else {
+        fmt.Println("insert test parkingLot end")
+    }
+
+    parkingSpot := new(ParkingSpot)
+    parkingSpot.Remark = "这是车位的测试"
+    parkingSpot.ParkingLot = parkingLot
+    parkingSpot.Owner = owner
+    parkingSpot.CarLicencePlate = "辽B 88888"
+    parkingSpot.CarColor = "白"
+    parkingSpot.CarName = "Tesla Model X"
+    _, err = o.Insert(parkingSpot)
+    if err != nil {
+        fmt.Println(err.Error())
+        os.Exit(-1)
+    } else {
+        fmt.Println("insert test parkintSpot end")
+    }
 }
 
 //数据库连接
@@ -243,3 +273,18 @@ func insertBuilding(name string) {
     }
 }
 
+func insertParkingLot(name string) {
+    fmt.Println("insert parkingLot:", name)
+    p := new(ParkingLot)
+    p.Name = name
+    p.Area = 1999
+    p.ParkingSpotNum = 30
+    o = orm.NewOrm()
+    n, err := o.Insert(p)
+    if err != nil {
+        fmt.Println(err.Error())
+        os.Exit(-1)
+    } else {
+        fmt.Println("insert", n, "parkingLot end")
+    }
+}
