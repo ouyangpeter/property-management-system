@@ -136,6 +136,7 @@ func insertTestData() {
 
     parkingSpot := new(ParkingSpot)
     parkingSpot.Remark = "这是车位的测试"
+    parkingSpot.ParkingSpotNo = "1102"
     parkingSpot.ParkingLot = parkingLot
     parkingSpot.Owner = owner
     parkingSpot.CarLicencePlate = "辽B 88888"
