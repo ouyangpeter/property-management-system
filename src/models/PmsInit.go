@@ -271,9 +271,9 @@ func insertUser() {
     u := new(User)
     u.UserName = "admin"
     u.Password = Pwdhash("admin")
-    u.Email = "ouyangpeter911@gmail.com"
+    u.Email = "pms_admin@gmail.com"
     u.Remark = "I'm admin"
-    u.Nickname = "欧阳"
+    u.Nickname = "测试测试"
     u.Status = 2
     u.Type = 12
     o = orm.NewOrm()
