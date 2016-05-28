@@ -161,6 +161,32 @@
                 }
             }]
         });
+        //创建选择户主窗口
+        $("#dialog_choose_owner").dialog({
+            modal: true,
+            resizable: true,
+            top: 150,
+            closed: true,
+            buttons: [{
+                text: '确定',
+                iconCls: 'icon-save',
+                handler: function () {
+                    if ($("#input_owner_name2").val() != "" && $("#input_owner_phone2").val() != "") {
+                        $("#input_owner_phone").val($("#input_owner_phone2").val())
+                        $("#input_owner_name").val($("#input_owner_name2").val())
+                        $("#dialog_choose_owner").dialog("close");
+                    } else {
+                        vac.alert("未选择户主");
+                    }
+                }
+            }, {
+                text: '取消',
+                iconCls: 'icon-cancel',
+                handler: function () {
+                    $("#dialog_choose_owner").dialog("close");
+                }
+            }]
+        });
 
     });
 
@@ -256,6 +282,11 @@
                 }
         )
         ;
+    }
+
+    function chooseOwner() {
+        $("#dialog_choose_owner").dialog('open');
+        $("#form_choose_owner").form('clear');
     }
     function Query() {
         var postData = new Object();
@@ -383,18 +414,23 @@
         </form>
     </div>
 </div>
-<div id="dialog_regist_owner" title="车位登记户主" style="width:400px;height:400px;">
+<div id="dialog_regist_owner" title="车位登记户主" style="width:450px;height:400px;">
     <div style="padding:20px 20px 40px 80px;">
         <form id="form_regist_owner" method="post">
             <input id="parkingSpotId" name="Id" type="hidden">
             <table>
                 <tr>
                     <td>户主姓名：</td>
-                    <td><input name="OwnerName" class="easyui-validatebox" required="true"/></td>
+                    <td><input id="input_owner_name" name="OwnerName" class="easyui-validatebox" required="true"/></td>
+                    <td>
+                        <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'"
+                           onclick="chooseOwner()">选择</a>
+                    </td>
                 </tr>
                 <tr>
                     <td>户主手机号：</td>
-                    <td><input name="OwnerPhone" class="easyui-validatebox" required="true"/></td>
+                    <td><input id="input_owner_phone" name="OwnerPhone" class="easyui-validatebox" required="true"/>
+                    </td>
                 </tr>
                 <tr>
                     <td>车牌号：</td>
@@ -407,6 +443,60 @@
                 <tr>
                     <td>车名：</td>
                     <td><input name="CarName" class="easyui-validatebox" required="true"/></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
+<div id="dialog_choose_owner" title="户主选择" style="width:400px;height:400px;">
+    <div style="padding:20px 20px 40px 80px;">
+        <form id="form_choose_owner" method="post">
+            <table>
+                <tr>
+                    <td>楼宇名称:</td>
+                    <td><input class="easyui-combobox"
+                               id="query_building_id"
+                               style="width: 100px;"
+                               data-options="
+    valueField: 'Id',
+    textField: 'Name',
+    url: '/pms/building/buildingList',
+    onSelect: function(rec){
+    $('#query_unit_name').combobox('clear');
+    $('#query_house_no').combobox('clear');
+    var url = '/pms/building/unitList?BuildingId='+rec.Id;
+    $('#query_unit_name').combobox('reload', url);
+    }
+    "></td>
+                </tr>
+                <tr>
+                    <td>单元名称:</td>
+                    <td><input class="easyui-combobox" id="query_unit_name" style="width:60px;" data-options="
+                    valueField:'UnitName',textField:'UnitName',onSelect: function(rec){
+    $('#query_house_no').combobox('clear');
+    var url = '/pms/house/houseList?building_id='+rec.Building.Id+'&unit_name='+rec.UnitName;
+    $('#query_house_no').combobox('reload', url);
+    }
+                    "></td>
+                </tr>
+                <tr>
+                    <td>房号:</td>
+                    <td><input class="easyui-combobox" id="query_house_no" style="width: 70px;"
+                               data-options="valueField:'Id',textField:'HouseNo', method:'post',onSelect: function(rec){
+                               $('#input_owner_name2').val(rec.Owner.Name);
+                               $('#input_owner_phone2').val(rec.Owner.PhoneNumber);
+    }"></td>
+                </tr>
+                <tr>
+                    <td>户主姓名：</td>
+                    <td><input id="input_owner_name2" name="OwnerName" class="easyui-validatebox" disabled="disabled"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>户主手机号：</td>
+                    <td><input id="input_owner_phone2" name="OwnerPhone" class="easyui-validatebox"
+                               disabled="disabled"/>
+                    </td>
                 </tr>
             </table>
         </form>
