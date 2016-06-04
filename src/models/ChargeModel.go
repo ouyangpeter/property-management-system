@@ -31,6 +31,7 @@ type ChargeQueryParam struct {
     OwnerName    string
     ChargeTypeId int64
     Status       int
+    OwnerId      int64
 }
 
 func checkCharge(charge *Charge) (error) {
@@ -59,6 +60,10 @@ func GetChargeList(page int64, page_size int64, sort string, queryData ChargeQue
 
     if len(queryData.OwnerName) > 0 {
         qs = qs.Filter("Owner__Name", queryData.OwnerName)
+    }
+
+    if queryData.OwnerId > 0 {
+        qs = qs.Filter("Owner__Id", queryData.OwnerId)
     }
 
     var offset int64

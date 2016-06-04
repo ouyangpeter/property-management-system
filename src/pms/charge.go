@@ -30,6 +30,17 @@ func (this *ChargeController)Index() {
     } else {
         sort = "Id"
     }
+    userinfo := this.GetSession("userinfo")
+    if userinfo == nil {
+        this.Abort("401")
+    }
+    if (userinfo.(m.User).Type == 11){
+        owner, err := m.GetOwnerByUserId(userinfo.(m.User).Id)
+        if err != nil {
+            this.Abort("401")
+        }
+        queryData.OwnerId = owner.Id
+    }
     charges, count := m.GetChargeList(page, page_size, sort, queryData)
 
     for _, charge := range charges {
@@ -51,6 +62,7 @@ func (this *ChargeController)Index() {
         this.ServeJSON()
         return
     } else {
+        this.Data["userinfo"] = userinfo
         this.Data["charges"] = &charges
         if this.GetTemplateType() != "easyui" {
             this.Layout = this.GetTemplateType() + "/public/layout.tpl"

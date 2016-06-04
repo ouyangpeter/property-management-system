@@ -293,9 +293,16 @@
         {{if eq 11 .userinfo.Type}}
         <div title="我的小区">
             <ul>
-                <li><a href="#" onclick="addTab('收费类型', '/pms/chargeType/index')">收费类型管理</a></li>
+                <li><a href="#" onclick="addTab('收费类型', '/pms/chargeType/index')">收费类型</a></li>
             </ul>
         </div>
+        <div title="我的费用">
+            <ul>
+                <li><a href="#" onclick="addTab('收费类型', '/pms/chargeType/index')">收费类型</a></li>
+                <li><a href="#" onclick="addTab('收费查看', '/pms/charge/index')">收费查看</a></li>
+            </ul>
+        </div>
+
     </div>
     {{end}}
     {{end}}

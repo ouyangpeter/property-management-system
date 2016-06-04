@@ -94,7 +94,9 @@
                 })
             },
             onDblClickRow: function (index, row) {
+                {{if eq 12 .userinfo.Type}}
                 editrow();
+                {{end}}
             },
             onRowContextMenu: function (e, index, row) {
                 e.preventDefault();
@@ -295,8 +297,10 @@
                         <option value="1">已结款</option>
                         <option value="2">未结款</option>
                     </select></td>
+                    {{if eq 12 .userinfo.Type}}
                     <td>户主:</td>
                     <td><input type="text" id="query_owner_name" value="" size="10"></td>
+                    {{end}}
                     <td><input value="查询" type="button" id="BN_Find" style="width:80px; height:30px;" class="button"
                                onclick="Query();"></td>
                 </tr>
@@ -310,20 +314,24 @@
     </div>
 </div>
 <div id="tb" style="padding:5px;height:auto">
+    {{if eq 12 .userinfo.Type}}
     <a href="#" icon='icon-add' plain="true" onclick="addrow()" class="easyui-linkbutton">新增</a>
     <a href="#" icon='icon-edit' plain="true" onclick="editrow()" class="easyui-linkbutton">编辑</a>
     <a href="#" icon='icon-save' plain="true" onclick="saverow()" class="easyui-linkbutton">保存</a>
     <a href="#" icon='icon-cancel' plain="true" onclick="delrow()" class="easyui-linkbutton">删除</a>
+    {{end}}
     <a href="#" icon='icon-reload' plain="true" onclick="reloadrow()" class="easyui-linkbutton">刷新</a>
 </div>
 <!--表格内的右键菜单-->
 <div id="mm" class="easyui-menu" style="width:120px;display: none">
+    {{if eq 12 .userinfo.Type}}
     <div iconCls='icon-add' onclick="addrow()">新增</div>
     <div iconCls="icon-edit" onclick="editrow()">编辑</div>
     <div iconCls='icon-save' onclick="saverow()">保存</div>
     <div iconCls='icon-cancel' onclick="cancelrow()">取消</div>
     <div class="menu-sep"></div>
     <div iconCls='icon-cancel' onclick="delrow()">删除</div>
+    {{end}}
     <div iconCls='icon-reload' onclick="reloadrow()">刷新</div>
     <div class="menu-sep"></div>
     <div>Exit</div>

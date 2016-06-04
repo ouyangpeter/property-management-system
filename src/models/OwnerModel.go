@@ -229,3 +229,9 @@ func UpdateOwner(owner *Owner) (int64, error) {
     return num, err
 
 }
+
+func GetOwnerByUserId(id int64)(owner Owner, err error){
+    o := orm.NewOrm()
+    err = o.QueryTable(new(Owner)).Filter("User__Id", id).One(&owner)
+    return owner, err
+}

@@ -41,6 +41,11 @@ func (this *ChargeTypeController)Index() {
         this.ServeJSON()
         return
     } else {
+        userinfo := this.GetSession("userinfo")
+        if userinfo == nil {
+            this.Abort("401")
+        }
+        this.Data["userinfo"] = userinfo
         this.Data["chargeTypes"] = &chargeTypes
         if this.GetTemplateType() != "easyui" {
             this.Layout = this.GetTemplateType() + "/public/layout.tpl"
