@@ -54,6 +54,12 @@ func GetNoticeList(page int64, page_size int64, sort string, queryData NoticeQue
     return notices, count
 }
 
+func GetNoticeById(id int64) (notice Notice, err error) {
+    o := orm.NewOrm()
+    err = o.QueryTable(new(Notice)).Filter("Id", id).One(&notice)
+    return notice, err
+}
+
 func AddNotice(n *Notice) (int64, error) {
     if err := checkNotice(n); err != nil {
         return 0, err

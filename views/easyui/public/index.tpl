@@ -251,6 +251,7 @@
 
 <div region="west" split="true" iconCls="icon-news" title="主菜单" style="width:150px;padding:0px;">
     <div id="d_accordionmenu" class="easyui-accordion">
+        {{if eq 12 .userinfo.Type}}
         <div title='小区管理'>
             <ul>
                 <li><a href="#" onclick="addTab('系统公告', '/pms/notice/index');">系统公告</a></li>
@@ -288,7 +289,17 @@
                 <li><a href="#" onclick="addTab('系统用户管理', '/pms/user/index');">系统用户管理</a></li>
             </ul>
         </div>
+        {{else}}
+        {{if eq 11 .userinfo.Type}}
+        <div title="我的小区">
+            <ul>
+                <li><a href="#" onclick="addTab('收费类型', '/pms/chargeType/index')">收费类型管理</a></li>
+            </ul>
+        </div>
     </div>
+    {{end}}
+    {{end}}
+</div>
 </div>
 <div region="center" iconCls="icon-index">
     <div class="easyui-tabs" fit="true" border="false" id="tabs">

@@ -25,9 +25,9 @@ type CommunityInfo struct {
     PrincipalPhone string
     BuildDate      string
     ParkingLotArea string
-    BuildingArea  string
-    GreeningArea  string
-    RoadArea      string
+    BuildingArea   string
+    GreeningArea   string
+    RoadArea       string
 }
 
 var communityInfo CommunityInfo = CommunityInfo{
@@ -121,5 +121,23 @@ func (this *MainController) Changepwd() {
 
 func (this *MainController)Home() {
     this.Data["communityInfo"] = &communityInfo
+    notices, count := models.GetNoticeList(1, 10, "-Id", models.NoticeQueryParam{})
+    if count == 0 {
+        notices = nil
+    }
+    this.Data["notices"] = &notices
     this.TplName = this.GetTemplateType() + "/public/home.tpl"
+}
+
+func (this *MainController)NoticeContent() {
+    id, err := this.GetInt64("Id")
+    if err != nil {
+        this.Abort("403")
+    }
+    notice, err := models.GetNoticeById(id)
+    if err != nil {
+        this.Abort("403")
+    }
+    this.Data["notice"] = &notice
+    this.TplName = this.GetTemplateType() + "/public/notice_content.tpl"
 }

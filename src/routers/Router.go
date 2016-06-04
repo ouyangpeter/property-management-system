@@ -21,6 +21,8 @@ func init() {
             &pms.MainController{}, "*:Changepwd"),
         beego.NSRouter("/home",
             &pms.MainController{}, "get:Home"),
+        beego.NSRouter("/notice_content",
+            &pms.MainController{}, "get:NoticeContent"),
     )
     pmsNs := beego.NewNamespace("/pms",
         beego.NSNamespace("/building",

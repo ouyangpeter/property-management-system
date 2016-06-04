@@ -35,17 +35,16 @@
             <div class="warp cf mt10">
                 <div class="idx_left fl">
                     <div class="mode">
-                        <div class="title"><a href="office/news.aspx" target="_blank" class="more">更多 &gt;&gt;</a><span>通告栏</span>
+                        <div class="title"><a href="" target="_blank" class="more">更多 &gt;&gt;</a><span>通告栏</span>
                         </div>
                         <div class="announce">
                             <ul id="d_news" style="height:370px;">
-                                <li><span>2016-02-25</span><a href=''
-                                                              title='物业管理系统简介' target='_blank'>物业管理系统简介</a></li>
-                                <li><span>2016-02-25</span><a href=''
-                                                              title='物业管理系统使用须知' target='_blank'>物业管理系统使用须知</a></li>
-                                <li><span>2016-02-25</span><a href=''
-                                                              title='关于IE6.0浏览器的升级说明'
-                                                              target='_blank'>关于IE6.0浏览器的升级说明</a></li>
+                                {{range .notices}}
+                                <li><span>{{.Created}}</span><a href='notice_content?Id={{.Id}}'
+                                                              title='{{.Title}}'
+                                                              target='_blank'>{{.Title}}</a></li>
+
+                                {{end}}
                             </ul>
                         </div>
                     </div>
