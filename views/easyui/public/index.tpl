@@ -42,7 +42,7 @@
     }
 
     $(document).ready(function () {
-        addTabIcon("首页", "home.aspx", "icon-home");
+        addTabIcon("首页", "/public/home", "icon-home");
     });
 
 
@@ -253,9 +253,7 @@
     <div id="d_accordionmenu" class="easyui-accordion">
         <div title='小区管理'>
             <ul>
-                <li><a href="#" onclick="addTab('小区信息', '');">小区信息</a></li>
-                <li><a href="#" onclick="addTab('周边设施', '');">周边设施</a></li>
-                <li><a href="#" onclick="addTab('系统公告', '');">系统公告</a></li>
+                <li><a href="#" onclick="addTab('系统公告', '/pms/notice/index');">系统公告</a></li>
             </ul>
         </div>
 

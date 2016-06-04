@@ -19,6 +19,8 @@ func init() {
             &pms.MainController{}, "*:Logout"),
         beego.NSRouter("/changepwd",
             &pms.MainController{}, "*:Changepwd"),
+        beego.NSRouter("/home",
+            &pms.MainController{}, "get:Home"),
     )
     pmsNs := beego.NewNamespace("/pms",
         beego.NSNamespace("/building",
@@ -69,12 +71,16 @@ func init() {
             beego.NSRouter("/updateChargeType", &pms.ChargeTypeController{}, "*:Update"),
             beego.NSRouter("/chargeTypeList", &pms.ChargeTypeController{}, "*:GetAllChargeTypeList"),
         ),
-
         beego.NSNamespace("/charge",
             beego.NSRouter("/index", &pms.ChargeController{}, "*:Index"),
             beego.NSRouter("/addCharge", &pms.ChargeController{}, "*:Add"),
             beego.NSRouter("/deleteCharge", &pms.ChargeController{}, "*:Delete"),
             beego.NSRouter("/updateCharge", &pms.ChargeController{}, "*:Update"),
+        ),
+        beego.NSNamespace("/notice",
+            beego.NSRouter("/index", &pms.NoticeController{}, "*:Index"),
+            beego.NSRouter("/addNotice", &pms.NoticeController{}, "*:Add"),
+            beego.NSRouter("/deleteNotice", &pms.NoticeController{}, "*:Delete"),
         ),
     )
     beego.AddNamespace(publicNs)

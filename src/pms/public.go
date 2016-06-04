@@ -4,11 +4,41 @@ import (
     . "property-management-system/src"
     "property-management-system/src/models"
     "time"
+    "github.com/astaxie/beego"
 )
 
 type MainController struct {
     CommonController
     TemplateType string
+}
+//community_name = xxx小区
+//principal_name = 王五
+//principal_phone = 13000000000
+//build_date = 2014年6月8日
+//parking_lot_area = 5000
+//building_area = 8000
+//greening_area = 1000
+//road_area = 400
+type CommunityInfo struct {
+    CommunityName  string
+    PrincipalName  string
+    PrincipalPhone string
+    BuildDate      string
+    ParkingLotArea string
+    BuildingArea  string
+    GreeningArea  string
+    RoadArea      string
+}
+
+var communityInfo CommunityInfo = CommunityInfo{
+    CommunityName:beego.AppConfig.String("community_name"),
+    PrincipalName:beego.AppConfig.String("principal_name"),
+    PrincipalPhone:beego.AppConfig.String("principal_phone"),
+    BuildDate:beego.AppConfig.String("build_date"),
+    ParkingLotArea:beego.AppConfig.String("parking_lot_area"),
+    BuildingArea:beego.AppConfig.String("building_area"),
+    GreeningArea:beego.AppConfig.String("greening_area"),
+    RoadArea:beego.AppConfig.String("road_area"),
 }
 
 func updateUserLoginInfo(u models.User) {
@@ -87,4 +117,9 @@ func (this *MainController) Changepwd() {
     }
     this.Rsp(false, "密码错误")
 
+}
+
+func (this *MainController)Home() {
+    this.Data["communityInfo"] = &communityInfo
+    this.TplName = this.GetTemplateType() + "/public/home.tpl"
 }

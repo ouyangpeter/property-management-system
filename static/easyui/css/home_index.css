@@ -1,0 +1,142 @@
+/* CSS Document */
+
+#d_home {
+    width: 800px;
+
+    margin: 0px auto;
+}
+
+.index {
+    margin: 5px;
+}
+
+.index .idx_left {
+    width: 556px;
+    margin-right: 10px;
+}
+
+.index .idx_right {
+    width: 200px;
+}
+
+.mode {
+    border: solid 1px #a9b9c9;
+}
+
+.mode .title {
+    height: 21px;
+    line-height: 21px;
+    background: url(/static/easyui/img/title_bg.jpg) repeat-x 0px 0px;
+    border-bottom: solid 1px #a9b9c9;
+    padding: 0 10px;
+    font-weight: bold;
+}
+
+.mode .title span {
+    display: block;
+    background: url(/static/easyui/img/icon_title.jpg) no-repeat 0px 3px;
+    padding-left: 20px;
+}
+
+.mode .title a.more {
+    float: right;
+    font-weight: normal;
+}
+
+.showpic {
+    background-color: #86b9e4;
+    overflow: hidden;
+    width: 100%;
+}
+
+.announce {
+    padding: 5px 15px;
+}
+
+.announce li {
+    line-height: 26px;
+    height: 26px;
+    overflow: hidden;
+    border-bottom: dashed 1px #6e6e6e;
+    background: url(/static/easyui/img/buttle.jpg) no-repeat 5px 10px;
+    padding: 0 10px 0 20px;
+}
+
+.announce li span {
+    float: right;
+    color: #f87815;
+}
+
+.policy {
+    padding: 5px 15px;
+}
+
+.policy li {
+    line-height: 26px;
+    height: 26px;
+    overflow: hidden;
+    border-bottom: dashed 1px #6e6e6e;
+    background: url(/static/easyui/img/buttle.jpg) no-repeat 5px 10px;
+    padding: 0 10px 0 20px;
+}
+
+.policy li span {
+    float: right;
+    color: #f87815;
+}
+
+.sys_announce {
+    padding: 6px 10px 7px;
+}
+
+.sys_announce li {
+    height: 20px;
+    line-height: 20px;
+    overflow: hidden;
+}
+
+.questions {
+    padding: 6px 10px;
+}
+
+.questions li {
+    height: 20px;
+    line-height: 20px;
+    overflow: hidden;
+}
+
+.myquestion {
+    padding: 15px;
+}
+
+.myquestion textarea {
+    resize: none;
+    width: 100%;
+    border: solid 1px #a9b9c9;
+    height: 100px;
+    line-height: 20px;
+}
+
+.myquestion .btn {
+    height: 25px;
+    text-align: center;
+    padding-top: 15px;
+}
+
+.myquestion .btn a {
+    display: inline-block;
+    height: 21px;
+    line-height: 21px;
+    border: solid 1px #a9b9c9;
+    background: url(/static/easyui/img/title_bg.jpg) repeat-x 0px 0px;
+    font-weight: bold;
+    width: 50px;
+    text-align: center;
+    margin: 0 4px;
+    zoom: 1;
+}
+
+.myquestion .btn a {
+    *display: inline;
+    _display: inline;
+}
