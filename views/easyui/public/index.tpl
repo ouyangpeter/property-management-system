@@ -306,6 +306,8 @@
         <div title='小区管理'>
             <ul>
                 <li><a href="#" onclick="addTab('系统公告', '/pms/notice/index');">系统公告</a></li>
+                <li><a href="#" onclick="addTab('投诉管理', '/pms/complaint/index');">投诉管理</a></li>
+
             </ul>
         </div>
 
@@ -345,6 +347,7 @@
         <div title="我的小区">
             <ul>
                 <li><a href="#" onclick="addTab('收费类型', '/pms/chargeType/index')">收费类型</a></li>
+                <li><a href="#" onclick="addTab('我的投诉', '/pms/complaint/index')">我的投诉</a></li>
             </ul>
         </div>
         <div title="我的费用">

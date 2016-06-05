@@ -27,6 +27,7 @@ type Owner struct {
     Password     string      `orm:"-" form:"Password"`
     ParkingSpots []*ParkingSpot   `orm:"reverse(many)"`
     Charges      []*Charge    `orm:"reverse(many)"`
+    Complaints   []*Complaint `orm:"reverse(many)"`
 }
 
 func init() {
