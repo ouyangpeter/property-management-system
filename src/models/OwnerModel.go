@@ -48,6 +48,7 @@ type OwnerQueryParam struct {
     BuildingId  int64
     UnitName    string
     HouseId     int64
+    Id          int64
 }
 
 func GetOwnerList(page int64, page_size int64, sort string, queryData OwnerQueryParam) (owners []Owner, count int64) {
@@ -62,6 +63,9 @@ func GetOwnerList(page int64, page_size int64, sort string, queryData OwnerQuery
     }
     if queryData.HouseId > 0 {
         qs = qs.Filter("Houses__Id", queryData.HouseId)
+    }
+    if queryData.Id > 0 {
+        qs = qs.Filter("Id", queryData.Id)
     }
 
     if len(queryData.Name) > 0 {
@@ -230,7 +234,7 @@ func UpdateOwner(owner *Owner) (int64, error) {
 
 }
 
-func GetOwnerByUserId(id int64)(owner Owner, err error){
+func GetOwnerByUserId(id int64) (owner Owner, err error) {
     o := orm.NewOrm()
     err = o.QueryTable(new(Owner)).Filter("User__Id", id).One(&owner)
     return owner, err

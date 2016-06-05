@@ -29,6 +29,7 @@ func (this *OwnerController)Index() {
     ownerPhone := this.GetString("owner_phone")
     ownerIdCard := this.GetString("owner_idcard")
     ownerCompany := this.GetString("owner_company")
+    id, _ := this.GetInt64("Id")
 
     queryData := m.OwnerQueryParam{
         Name:ownerName,
@@ -38,6 +39,7 @@ func (this *OwnerController)Index() {
         PhoneNumber:ownerPhone,
         IdCard:ownerIdCard,
         Company:ownerCompany,
+        Id:id,
     }
 
     if len(order) > 0 {

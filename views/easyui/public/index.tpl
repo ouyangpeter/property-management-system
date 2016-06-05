@@ -40,6 +40,54 @@
         $("#oldPassword").focus();
         $("#form1").form('clear');
     }
+    function modifyuserinfo() {
+        $("#dialog2").dialog({
+            modal: true,
+            title: "个人信息",
+            width: 300,
+            height: 280,
+            buttons: [{
+                text: '保存',
+                iconCls: 'icon-save',
+                handler: function () {
+                    $("#form2").form('submit', {
+                        url: '/pms/owner/updateOwner',
+                        onSubmit: function () {
+                            return $("#form2").form('validate');
+                        },
+                        success: function (r) {
+                            var r = $.parseJSON(r);
+                            if (r.status) {
+//                                $.messager.alert("提示", r.info, 'info', function () {
+//                                    location.href = URL + "/logout";
+//                                });
+                                vac.alert("保存成功");
+                            } else {
+                                vac.alert(r.info);
+                            }
+                        }
+                    });
+                }
+            }, {
+                text: '取消',
+                iconCls: 'icon-cancel',
+                handler: function () {
+                    $("#dialog2").dialog("close");
+                }
+            }]
+        });
+        var id = {{.userinfo.Id}}
+        $.post("/pms/owner/index", {Id:id}, function (response) {
+//            console.log(response.rows[0].Name)
+            $('#userinfo_id_card').val(response.rows[0].IdCard);
+            $('#userinfo_company').val(response.rows[0].Company);
+            $('#userinfo_name').val(response.rows[0].Name);
+            $('#userinfo_phone_number').val(response.rows[0].PhoneNumber);
+
+        });
+//        $("#oldPassword").focus();
+        //get userinfo
+    }
 
     $(document).ready(function () {
         addTabIcon("首页", "/public/home", "icon-home");
@@ -49,7 +97,8 @@
     $(function () {
         closeTab();
         closePwd();
-    })
+        $('#dialog2').window('close');
+    });
 
     $(function () {
         $('#loginOut').click(function () {
@@ -239,8 +288,10 @@
 
         <div style="float:right; padding-right:20px; margin-top:10px;" class="head">欢迎 <span id="Lab_user"><font
                 color='#ff9933'><strong>{{.userinfo.UserName}}</strong></font></span>&nbsp;&nbsp;|&nbsp;&nbsp;<a
-                href="/public/index">返回首页</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="#" id="editpass"
-                                                                         onclick="modifypassword()">修改密码</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a
+                href="/public/index">返回首页</a>&nbsp;&nbsp;{{if eq 11 .userinfo.Type}}|&nbsp;&nbsp;<a href="#"
+                                                                                                    onclick="modifyuserinfo()">个人信息</a>&nbsp;&nbsp;{{end}}|&nbsp;&nbsp;<a
+                href="#" id="editpass"
+                onclick="modifypassword()">修改密码</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a
                 href="#" id="loginOut">安全退出</a>
         </div>
 
@@ -350,6 +401,43 @@
                         <td style="width:90px;">确认新密码：</td>
                         <td><input name="repeatPassword" type="Password" class="easyui-validatebox" required="true"
                                    validType="password[5,20]" missingMessage="请重复填写需要修改的密码"/></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="dialog2" class="easyui-window" title="个人信息" collapsible="false" minimizable="false" maximizable="false"
+     icon="icon-save" style="width: 300px; height: 180px; padding: 5px; background: #fafafa;">
+    <div class="easyui-layout" fit="true">
+        <div region="center" border="false" style="padding: 10px; background: #fff; border: 0px solid #ccc;">
+            <form id="form2" method="post">
+                <input name="Id" value="{{.userinfo.Id}}" hidden="hidden">
+                <table width="100%" class="publictable">
+                    <tr>
+                        <td style="width:90px;">姓名：</td>
+                        <td><input id="userinfo_name" type="text" readonly="readonly"/></td>
+                    </tr>
+                    <!--<tr>-->
+                    <!--<td style="width:90px;">原密码：</td>-->
+                    <!--<td><input id="oldPassword" name="oldPassword" type="Password" class="easyui-validatebox"-->
+                    <!--required="true"-->
+                    <!--validType="password[5,20]" missingMessage="请填写当前使用的密码"/></td>-->
+                    <!--</tr>-->
+                    <tr>
+                        <td style="width:90px;">手机号：</td>
+                        <td><input id="userinfo_phone_number" name="PhoneNumber" type="text" class="easyui-validatebox"
+                                   validType="length[11,11]"/></td>
+                    </tr>
+                    <tr>
+                        <td style="width:90px;">身份证：</td>
+                        <td><input id="userinfo_id_card" name="IdCard" type="text" class="easyui-validatebox"
+                                   validType="length[18,18]"/></td>
+                    </tr>
+                    <tr>
+                        <td style="width:90px;">工作单位：</td>
+                        <td><input id="userinfo_company" name="Company" type="text" class="easyui-validatebox"/></td>
                     </tr>
                 </table>
             </form>
