@@ -340,7 +340,7 @@
 <div id="mm1" class="easyui-menu" style="width:120px;display: none">
     <div icon='icon-add' onclick="addrow()">新增</div>
 </div>
-<div id="dialog" title="添加收费" style="width:450px;height:400px;">
+<div id="dialog" title="添加收费" style="width:450px;height:300px;">
     <div style="padding:20px 20px 40px 80px;">
         <form id="form1" method="post">
             <input id="input_owner_id" name="OwnerId" type="hidden"/>

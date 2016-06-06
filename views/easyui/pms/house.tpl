@@ -279,7 +279,7 @@
 <div id="mm1" class="easyui-menu" style="width:120px;display: none">
     <div icon='icon-add' onclick="addrow()">新增</div>
 </div>
-<div id="dialog" title="添加房屋" style="width:400px;height:400px;">
+<div id="dialog" title="添加房屋" style="width:400px;height:300px;">
     <div style="padding:20px 20px 40px 80px;">
         <form id="form1" method="post">
             <table>

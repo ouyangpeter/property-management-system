@@ -67,7 +67,11 @@
                 {field:'action',title:'操作',width:40,align:'center',
                     formatter:function(value,row,index){
                         var c = '<a href="'+URL+'/detail?Id='+row.Id+'" target="_blank">详情</a> ';
-                        return c;
+                        var d;
+                        {{if eq 12 .userinfo.Type}}
+                        d = '<a onclick="DealComplaint('+row.Id+')" target="_blank">处理</a>';
+                        {{end}}
+                        return c + d;
                     }
                 }
             ]],
@@ -155,6 +159,40 @@
             }]
         });
 
+        $("#dialog2").dialog({
+            modal: true,
+            resizable: true,
+            top: 150,
+            closed: true,
+            buttons: [{
+                text: '保存',
+                iconCls: 'icon-save',
+                handler: function () {
+                    $("#form2").form('submit', {
+                        url: URL + '/updateComplaint',
+                        onSubmit: function () {
+                            return $("#form2").form('validate');
+                        },
+                        success: function (r) {
+                            var r = $.parseJSON(r);
+                            if (r.status) {
+                                $("#dialog2").dialog("close");
+                                $("#datagrid").datagrid('reload');
+                            } else {
+                                vac.alert(r.info);
+                            }
+                        }
+                    });
+                }
+            }, {
+                text: '取消',
+                iconCls: 'icon-cancel',
+                handler: function () {
+                    $("#dialog2").dialog("close");
+                }
+            }]
+        });
+
     })
 
 
@@ -230,6 +268,11 @@
             postData.status = $('#query_status').val();
         }
         $('#datagrid').datagrid('load', postData);
+    }
+
+    function DealComplaint(Id) {
+        $('#dialog2').dialog('open');
+
     }
 
 </script>
@@ -308,6 +351,23 @@
                 <tr>
                     <td>投诉内容：</td>
                     <td><textarea name="Content" class="easyui-validatebox" validType="length[0,200]"></textarea></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
+
+<div id="dialog2" title="处理投诉" style="width:500px;height:400px;">
+    <div style="padding:20px 80px 40px 80px;">
+        <form id="form2" method="post">
+            <table>
+                <tr>
+                    <td>投诉标题：</td>
+                    <td><a id="text_title"></a></td>
+                </tr>
+                <tr>
+                    <td>投诉内容：</td>
+                    <td><a id="text_content"></a></td>
                 </tr>
             </table>
         </form>
