@@ -67,7 +67,7 @@
                 {field:'action',title:'操作',width:40,align:'center',
                     formatter:function(value,row,index){
                         var c = '<a href="'+URL+'/detail?Id='+row.Id+'" target="_blank">详情</a> ';
-                        var d;
+                        var d = '';
                         {{if eq 12 .userinfo.Type}}
                         d = '<a onclick="DealComplaint('+row.Id+')" target="_blank">处理</a>';
                         {{end}}
@@ -272,6 +272,27 @@
 
     function DealComplaint(Id) {
         $('#dialog2').dialog('open');
+        $.post("/pms/complaint/detail", {Id:Id}, function (data) {
+//           console.log(data.Title);
+            $('#text_id').val(Id);
+            $('#text_title').text(data.Title);
+            $('#text_content').text(data.Content);
+            $('#text_owner').text(data.Owner.Name);
+            $('#text_description').val(data.Description);
+            $('#text_manager').val(data.Manager);
+            $('#text_status').val(data.Status);
+
+            if (data.Status == 2){
+                $('#text_description').attr("disabled","true");
+                $('#text_manager').attr("disabled","true");
+                $('#text_status').attr("disabled","true");
+            }else{
+                $('#text_description').attr("disabled","false");
+                $('#text_manager').attr("disabled","false");
+                $('#text_status').attr("disabled","false");
+            }
+
+        });
 
     }
 
@@ -360,6 +381,7 @@
 <div id="dialog2" title="处理投诉" style="width:500px;height:400px;">
     <div style="padding:20px 80px 40px 80px;">
         <form id="form2" method="post">
+            <input name="Id" id="text_id" type="hidden">
             <table>
                 <tr>
                     <td>投诉标题：</td>
@@ -368,6 +390,26 @@
                 <tr>
                     <td>投诉内容：</td>
                     <td><a id="text_content"></a></td>
+                </tr>
+                <tr>
+                    <td>户主：</td>
+                    <td><a id="text_owner"></a></td>
+                </tr>
+                <tr>
+                    <td>处理:</td>
+                    <td><select id="text_status" name="Status" required="true">
+                        <option></option>
+                        <option value="1">待处理</option>
+                        <option value="2">已处理</option>
+                    </select></td>
+                </tr>
+                <tr>
+                    <td>处理人：</td>
+                    <td><input id="text_manager" name="Manager" class="easyui-validatebox" required="true"/></td>
+                </tr>
+                <tr>
+                    <td>处理说明：</td>
+                    <td><textarea id="text_description" name="Description" class="easyui-validatebox" validType="length[0,200]" required="true"></textarea></td>
                 </tr>
             </table>
         </form>

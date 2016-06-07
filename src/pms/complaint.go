@@ -146,11 +146,22 @@ func (this *ComplaintController)Detail() {
     if err != nil {
         this.Abort("401")
     }
-    this.Data["complaint"] = &complaint
-    log.Println(complaint)
-    log.Println(complaint.Owner.Name)
-    this.TplName = this.GetTemplateType() + "/pms/complaint_detail.tpl"
+    if complaint.Owner != nil {
+        complaint.Owner.User = nil
+        complaint.Owner.Houses = nil
+        complaint.Owner.ParkingSpots = nil
+        complaint.Owner.Complaints = nil
+    }
+    if this.IsAjax() {
+        this.Data["json"] = &complaint
+        this.ServeJSON()
+    } else {
 
+        this.Data["complaint"] = &complaint
+        log.Println(complaint)
+        log.Println(complaint.Owner.Name)
+        this.TplName = this.GetTemplateType() + "/pms/complaint_detail.tpl"
+    }
 }
 
 

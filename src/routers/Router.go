@@ -89,7 +89,7 @@ func init() {
             beego.NSRouter("/addComplaint", &pms.ComplaintController{}, "*:Add"),
             beego.NSRouter("/deleteComplaint", &pms.ComplaintController{}, "*:Delete"),
             beego.NSRouter("/updateComplaint", &pms.ComplaintController{}, "*:Update"),
-            beego.NSRouter("/detail", &pms.ComplaintController{}, "get:Detail"),
+            beego.NSRouter("/detail", &pms.ComplaintController{}, "*:Detail"),
         ),
     )
     beego.AddNamespace(publicNs)

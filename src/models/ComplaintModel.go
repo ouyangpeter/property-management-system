@@ -133,6 +133,7 @@ func UpdateComplaint(complaint *Complaint) (int64, error) {
     if len(newComplaint) == 0 {
         return 0, errors.New("update field is empty")
     }
+    newComplaint["Modified"] = time.Now()
 
     num, err := o.QueryTable(new(Complaint)).Filter("Id", complaint.Id).Update(newComplaint)
     return num, err
